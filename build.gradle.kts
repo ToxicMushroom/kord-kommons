@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.5.30"
 }
@@ -12,13 +10,10 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.21")
 }
 
 tasks.test {
     useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "13"
 }
