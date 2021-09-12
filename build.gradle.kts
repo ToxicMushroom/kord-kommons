@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "me.melijn.kordkommons"
-version = "1.0"
+version = "1.0.1"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -17,9 +17,15 @@ repositories {
     mavenCentral()
 }
 
+
+val kotlinX = "1.5.2-native-mt" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.21")
+
+    // Coroutine utils
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
 }
 
 tasks.test {
