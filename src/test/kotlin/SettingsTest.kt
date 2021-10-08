@@ -10,6 +10,11 @@ class SettingsTest {
         val botToken by string("token")
         val name by string("name")
         val id by long("id")
+        val clas by enum<Classes>("class", "Knight")
+    }
+
+    enum class Classes {
+        Knight, Marauder, Assassin, Mage
     }
 
     @Test
@@ -22,11 +27,13 @@ class SettingsTest {
         assertEquals(System.getenv("TEST_TOKEN"), token) // test the tests :)
         env["TEST_NAME"] = name
         env["TEST_ID"] = id.toString()
+        env["TEST_CLASS"] = "Knight"
 
         val settings = SettingsToTest()
         assertEquals(settings.botToken, token)
         assertEquals(settings.name, name)
         assertEquals(settings.id, id)
+        assertEquals(settings.clas, Classes.Knight)
     }
 
     /** janky hack mate: https://www.youtube.com/watch?v=OdfemrK97IM **/
