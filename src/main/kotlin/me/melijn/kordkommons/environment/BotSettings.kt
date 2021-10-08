@@ -48,6 +48,19 @@ open class BotSettings(val group: String) {
         getValue(key, default) { t -> t.toFloat() }
     }
 
+    inline fun <reified T: Enum<T>> enum(key: String, default: String? = null) = ReadOnlyProperty<BotSettings, T> { _, _ ->
+        val value = getValue(key, default) { t -> t }
+        val enumValues = enumValues<T>()
+        enumValues.firstOrNull { value.equals(it.toString(), true) }
+            ?: throw IllegalArgumentException("the env entry: ${group}_${key}=${value} has an incorrect value," +
+                    " the value should be one of the following: " +
+                    enumValues.joinToString())
+    }
+
+    inline fun <reified T: Enum<T>> enumN(key: String) = ReadOnlyProperty<BotSettings, T?> { _, _ ->
+        val value = getStringValue(key)
+        enumValues<T>().firstOrNull { value.equals(it.toString(), true) }
+    }
 
     fun <T> getValue(key: String, default: T?, convertor: (String) -> T): T {
         val value = getStringValueN(key, default)
@@ -58,10 +71,9 @@ open class BotSettings(val group: String) {
     fun getStringValue(key: String) = getStringValueN(key, null) ?: throw IllegalStateException()
     fun getStringValueN(key: String, default: Any?): String? {
         val value = getStringValueN(key)
-        if (value == null && default == null) throw IllegalStateException("missing env value for key: $key")
+        if (value == null && default == null) throw IllegalStateException("missing env value for key: ${group}_${key}")
         return value
     }
-
 
     fun getStringValueN(key: String) = dotEnv[transformedGroup + "_" + key.uppercase()]
 }
