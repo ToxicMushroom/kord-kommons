@@ -29,7 +29,7 @@ class SettingsTest {
         assertEquals(settings.id, id)
     }
 
-    /** janky hack mate **/
+    /** janky hack mate: https://www.youtube.com/watch?v=OdfemrK97IM **/
     private fun getModifiableEnvironment(): MutableMap<String, String> {
         val pe = Class.forName("java.lang.ProcessEnvironment")
         val getenv: Method = pe.getDeclaredMethod("getenv")
