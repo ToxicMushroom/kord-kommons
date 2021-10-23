@@ -29,7 +29,7 @@ open class BotSettings(val group: String) {
     }
 
     fun stringN(key: String) = ReadOnlyProperty<BotSettings, String?> { _, _ ->
-        getStringValue(key)
+        getStringValueN(key)
     }
 
     fun long(key: String, default: Long? = null) = ReadOnlyProperty<BotSettings, Long> { _, _ ->
@@ -58,7 +58,7 @@ open class BotSettings(val group: String) {
     }
 
     inline fun <reified T: Enum<T>> enumN(key: String) = ReadOnlyProperty<BotSettings, T?> { _, _ ->
-        val value = getStringValue(key)
+        val value = getStringValueN(key)
         enumValues<T>().firstOrNull { value.equals(it.toString(), true) }
     }
 
@@ -75,5 +75,5 @@ open class BotSettings(val group: String) {
         return value
     }
 
-    fun getStringValueN(key: String) = dotEnv[transformedGroup + "_" + key.uppercase()]
+    fun getStringValueN(key: String): String? = dotEnv[transformedGroup + "_" + key.uppercase()]
 }
