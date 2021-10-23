@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "me.melijn.kordkommons"
-version = "1.0.4"
+version = "1.0.6"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
