@@ -1,6 +1,7 @@
 package me.melijn.kordkommons.environment
 
 import io.github.cdimascio.dotenv.dotenv
+import java.lang.StringBuilder
 import kotlin.properties.ReadOnlyProperty
 
 /**
@@ -16,12 +17,14 @@ import kotlin.properties.ReadOnlyProperty
  */
 open class BotSettings(val group: String) {
     private val transformedGroup = group.replace(".", "_").uppercase()
+    var splitOnCammelCase = globalSplitOnCammelCase
 
     companion object {
         var dotEnv = dotenv {
             this.filename = System.getenv("ENV_FILE") ?: ".env"
             this.ignoreIfMissing = true
         }
+        var globalSplitOnCammelCase = false
     }
 
     fun string(key: String, default: String? = null) = ReadOnlyProperty<BotSettings, String> { _, _ ->
@@ -48,16 +51,19 @@ open class BotSettings(val group: String) {
         getValue(key, default) { t -> t.toFloat() }
     }
 
-    inline fun <reified T: Enum<T>> enum(key: String, default: String? = null) = ReadOnlyProperty<BotSettings, T> { _, _ ->
-        val value = getValue(key, default) { t -> t }
-        val enumValues = enumValues<T>()
-        enumValues.firstOrNull { value.equals(it.toString(), true) }
-            ?: throw IllegalArgumentException("the env entry: ${group}_${key}=${value} has an incorrect value," +
-                    " the value should be one of the following: " +
-                    enumValues.joinToString())
-    }
+    inline fun <reified T : Enum<T>> enum(key: String, default: String? = null) =
+        ReadOnlyProperty<BotSettings, T> { _, _ ->
+            val value = getValue(key, default) { t -> t }
+            val enumValues = enumValues<T>()
+            enumValues.firstOrNull { value.equals(it.toString(), true) }
+                ?: throw IllegalArgumentException(
+                    "the env entry: ${group}_${key}=${value} has an incorrect value," +
+                            " the value should be one of the following: " +
+                            enumValues.joinToString()
+                )
+        }
 
-    inline fun <reified T: Enum<T>> enumN(key: String) = ReadOnlyProperty<BotSettings, T?> { _, _ ->
+    inline fun <reified T : Enum<T>> enumN(key: String) = ReadOnlyProperty<BotSettings, T?> { _, _ ->
         val value = getStringValueN(key)
         enumValues<T>().firstOrNull { value.equals(it.toString(), true) }
     }
@@ -75,5 +81,16 @@ open class BotSettings(val group: String) {
         return value
     }
 
-    fun getStringValueN(key: String): String? = dotEnv[transformedGroup + "_" + key.uppercase()]
+    fun getStringValueN(key: String): String? {
+        val indexes = mutableListOf<Int>()
+        key.forEachIndexed { index, c ->
+            if (index != 0 && c.isUpperCase() && !key[index - 1].isUpperCase())
+                indexes.add(index)
+        }
+        val newKey = StringBuilder(key)
+        indexes.forEachIndexed { index, i ->
+            newKey.insert(index + i, "_")
+        }
+        return dotEnv[transformedGroup + "_" + newKey.toString()]
+    }
 }

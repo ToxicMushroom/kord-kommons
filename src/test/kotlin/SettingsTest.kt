@@ -12,6 +12,7 @@ class SettingsTest {
         val clas by enum<Classes>("class", "Knight")
         val nullableSetting by stringN("nullable")
         val nullableSetting2 by stringN("nullable2")
+        val camelCaseVar by stringN("camelCaseVar")
     }
 
     enum class Classes {
@@ -30,6 +31,7 @@ class SettingsTest {
         injectEnvironmentVariable("TEST_ID", id.toString())
         injectEnvironmentVariable("TEST_CLASS", "Knight")
         injectEnvironmentVariable("TEST_NULLABLE2", "setanyway")
+        injectEnvironmentVariable("TEST_CAMEL_CASE_VAR", "hi")
 
         val settings = SettingsToTest()
         assertEquals(settings.botToken, token)
@@ -38,6 +40,7 @@ class SettingsTest {
         assertEquals(settings.clas, Classes.Knight)
         assertEquals(settings.nullableSetting, null)
         assertEquals(settings.nullableSetting2, "setanyway")
+        assertEquals(settings.camelCaseVar, "hi")
     }
 
     /** janky hack mate: https://www.youtube.com/watch?v=OdfemrK97IM **/
@@ -63,6 +66,4 @@ class SettingsTest {
             .getDeclaredMethod("put", Object::class.java, Object::class.java)
             .invoke(map, key, value)
     }
-
-
 }

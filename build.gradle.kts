@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.5.31"
+    id("org.jetbrains.kotlin.jvm") version "1.6.0"
     id("maven-publish")
 }
 
@@ -26,8 +26,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
-    testImplementation("ch.qos.logback:logback-classic:1.2.6")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
+    testImplementation("ch.qos.logback:logback-classic:1.2.7")
 }
 
 tasks.test {
