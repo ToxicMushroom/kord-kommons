@@ -91,6 +91,6 @@ open class BotSettings(val group: String) {
         indexes.forEachIndexed { index, i ->
             newKey.insert(index + i, "_")
         }
-        return dotEnv[transformedGroup + "_" + newKey.toString()]
+        return dotEnv[transformedGroup + "_" + newKey.toString().uppercase()]
     }
 }
