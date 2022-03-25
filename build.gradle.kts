@@ -20,7 +20,8 @@ repositories {
 val kotlinX = "1.5.2-native-mt" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
-    implementation("org.slf4j:slf4j-api:1.7.32")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
+    implementation("org.slf4j:slf4j-api:1.7.36")
 
     // Coroutine utils
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
