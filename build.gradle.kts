@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.0"
+    id("org.jetbrains.kotlin.jvm") version "1.6.10"
     id("maven-publish")
 }
 
 group = "me.melijn.kordkommons"
-version = "1.0.7"
+version = "1.0.8"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -17,7 +17,8 @@ repositories {
     mavenCentral()
 }
 
-val kotlinX = "1.5.2-native-mt" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+val kotlin = "1.6.10"
+val kotlinX = "1.6.0-native-mt" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
     implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
@@ -27,8 +28,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
-    testImplementation("ch.qos.logback:logback-classic:1.2.7")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin")
+    testImplementation("ch.qos.logback:logback-classic:1.2.11")
 }
 
 tasks.test {
