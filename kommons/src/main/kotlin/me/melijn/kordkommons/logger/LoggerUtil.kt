@@ -2,7 +2,6 @@ package me.melijn.kordkommons.logger
 
 import mu.KLogger
 import mu.KotlinLogging
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KProperty
 
