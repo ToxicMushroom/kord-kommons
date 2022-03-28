@@ -1,12 +1,10 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.10"
     id("maven-publish")
 }
 
-group = "me.melijn.kordkommons"
-version = "1.0.9"
+group = "me.melijn.apkordex"
+version = "0.0.1"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -14,28 +12,20 @@ configure<JavaPluginExtension> {
 }
 
 repositories {
+    maven("https://maven.kotlindiscord.com/repository/maven-snapshots/")
+    maven("https://maven.kotlindiscord.com/repository/maven-releases/")
     mavenCentral()
 }
 
-val kotlin = "1.6.10"
-val kotlinX = "1.6.0-native-mt" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+val ksp = "1.6.10-1.0.2"
+val kordEx = "1.5.2-SNAPSHOT"
+
 dependencies {
-    implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
-    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation(kotlin("stdlib"))
 
-    // Coroutine utils
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin")
-    testImplementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("com.google.devtools.ksp:symbol-processing-api:$ksp")
+    implementation("com.kotlindiscord.kord.extensions:kord-extensions:$kordEx")
 }
-
-tasks.test {
-    useJUnitPlatform()
-}
-
 
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
@@ -46,7 +36,7 @@ tasks {
     withType(JavaCompile::class) {
         options.encoding = "UTF-8"
     }
-    withType(KotlinCompile::class) {
+    withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
         kotlinOptions {
             jvmTarget = "11"
         }

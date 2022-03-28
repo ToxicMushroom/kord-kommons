@@ -1,0 +1,4 @@
+me.melijn.apkord.injector.InjectorProvider
+me.melijn.apkord.createtable.TableProvider
+me.melijn.apkord.cacheable.CacheableProvider
+me.melijn.apkord.settings.SettingsProvider
