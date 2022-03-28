@@ -15,10 +15,13 @@ repositories {
     mavenCentral()
 }
 
+val ksp = "1.6.10-1.0.4"
+val koin = "3.1.5"
+
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.6.10-1.0.4")
-    implementation("io.insert-koin:koin-core:3.1.5")
+    implementation("com.google.devtools.ksp:symbol-processing-api:$ksp")
+    implementation("io.insert-koin:koin-core:$koin")
     implementation(project(":kommons"))
 }
 

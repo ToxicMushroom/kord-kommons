@@ -17,7 +17,7 @@ repositories {
     mavenCentral()
 }
 
-val ksp = "1.6.10-1.0.2"
+val ksp = "1.6.10-1.0.4"
 val kordEx = "1.5.2-SNAPSHOT"
 
 dependencies {
