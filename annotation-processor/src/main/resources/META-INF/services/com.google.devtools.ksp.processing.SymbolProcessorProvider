@@ -1,4 +1,4 @@
-me.melijn.apkord.injector.InjectorProvider
-me.melijn.apkord.createtable.TableProvider
-me.melijn.apkord.cacheable.CacheableProvider
-me.melijn.apkord.settings.SettingsProvider
+me.melijn.ap.injector.InjectorProvider
+me.melijn.ap.createtable.TableProvider
+me.melijn.ap.cacheable.CacheableProvider
+me.melijn.ap.settings.SettingsProvider

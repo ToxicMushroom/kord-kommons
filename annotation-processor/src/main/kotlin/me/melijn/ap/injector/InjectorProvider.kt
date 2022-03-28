@@ -1,16 +1,16 @@
-package me.melijn.apkord.cacheable
+package me.melijn.ap.injector
 
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import me.melijn.ap.util.OPTION_PREFIX
 
-class CacheableProvider : SymbolProcessorProvider {
+class InjectorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        return CacheableProcessor(
+        return InjectorProcessor(
             environment.codeGenerator,
             environment.logger,
-            environment.options["apkord_package"]!!,
-            environment.options["redisKeyPrefix"]!!
+            environment.options["${OPTION_PREFIX}_package"]!!
         )
     }
 }

@@ -1,4 +1,4 @@
-package me.melijn.apkord.injector
+package me.melijn.ap.injector
 
 import org.koin.core.module.Module
 

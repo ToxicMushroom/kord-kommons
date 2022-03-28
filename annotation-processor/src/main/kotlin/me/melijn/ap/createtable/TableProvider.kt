@@ -1,15 +1,16 @@
-package me.melijn.apkord.settings
+package me.melijn.ap.createtable
 
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import me.melijn.ap.util.OPTION_PREFIX
 
-class SettingsProvider : SymbolProcessorProvider {
+class TableProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        return SettingsProcessor(
+        return TableProcessor(
             environment.codeGenerator,
             environment.logger,
-            environment.options["apkord_package"]!!
+            environment.options["${OPTION_PREFIX}_package"]!!
         )
     }
 }

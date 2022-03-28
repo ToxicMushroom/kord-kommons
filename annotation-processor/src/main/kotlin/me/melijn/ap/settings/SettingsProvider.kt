@@ -1,15 +1,16 @@
-package me.melijn.apkord.injector
+package me.melijn.ap.settings
 
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import me.melijn.ap.util.OPTION_PREFIX
 
-class InjectorProvider : SymbolProcessorProvider {
+class SettingsProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        return InjectorProcessor(
+        return SettingsProcessor(
             environment.codeGenerator,
             environment.logger,
-            environment.options["apkord_package"]!!
+            environment.options["${OPTION_PREFIX}_package"]!!
         )
     }
 }

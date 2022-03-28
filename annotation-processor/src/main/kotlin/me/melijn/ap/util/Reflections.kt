@@ -1,4 +1,4 @@
-package me.melijn.apkord.util
+package me.melijn.ap.util
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 

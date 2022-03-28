@@ -1,12 +1,11 @@
-package me.melijn.apkord.createtable
+package me.melijn.ap.createtable
 
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
-import me.melijn.apkord.util.appendLine
-import me.melijn.apkord.util.appendText
+import me.melijn.ap.util.appendLine
 
 class TableProcessor(
     codeGenerator: CodeGenerator,

@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "me.melijn.apkordex"
+group = "me.melijn.kordkommons"
 version = "0.0.1"
 
 configure<JavaPluginExtension> {
@@ -56,6 +56,7 @@ publishing {
     publications {
         register("mavenJava", MavenPublication::class) {
             from(components["java"])
+            this.artifactId = "apkordex"
             artifact(sourcesJar.get())
         }
     }

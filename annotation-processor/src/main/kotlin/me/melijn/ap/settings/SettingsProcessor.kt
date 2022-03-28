@@ -1,12 +1,12 @@
-package me.melijn.apkord.settings
+package me.melijn.ap.settings
 
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
-import me.melijn.apkord.util.Reflections
-import me.melijn.apkord.util.appendText
+import me.melijn.ap.util.Reflections
+import me.melijn.ap.util.appendText
 import me.melijn.kordkommons.environment.BotSettings
 import java.util.*
 
