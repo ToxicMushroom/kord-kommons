@@ -4,13 +4,14 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.kotlindiscord.kord.extensions.utils.env
+import me.melijn.apkordex.util.OPTION_PREFIX
 
 class ExtensionProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return ExtensionProcessor(
             environment.codeGenerator,
             environment.logger,
-            environment.options["apkordex_package"]!!
+            environment.options["${OPTION_PREFIX}_package"]!!
         )
     }
 }
