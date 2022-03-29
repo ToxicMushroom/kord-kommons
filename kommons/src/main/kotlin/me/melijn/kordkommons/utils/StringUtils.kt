@@ -1,5 +1,6 @@
 package me.melijn.kordkommons.utils
 
+import java.lang.StringBuilder
 import kotlin.math.pow
 
 
@@ -90,4 +91,14 @@ fun String.isInside(vararg stringList: String, ignoreCase: Boolean): Boolean {
 
 fun String.isInside(stringList: Collection<String>, ignoreCase: Boolean): Boolean {
     return stringList.any { it.equals(this, ignoreCase) }
+}
+
+fun String.camelToSnake(): String {
+    val camelIndexes = mutableListOf<Int>()
+    forEachIndexed { index, c ->
+        if (index != 0 && c.isUpperCase() && !this[index - 1].isUpperCase()) camelIndexes.add(index)
+    }
+    val snakeBuilder = StringBuilder(this)
+    camelIndexes.forEachIndexed { index, i -> snakeBuilder.insert(index + i, "_") }
+    return snakeBuilder.toString()
 }

@@ -1,6 +1,7 @@
 package me.melijn.kordkommons.environment
 
 import io.github.cdimascio.dotenv.dotenv
+import me.melijn.kordkommons.utils.camelToSnake
 import java.lang.StringBuilder
 import kotlin.properties.ReadOnlyProperty
 
@@ -82,15 +83,7 @@ open class BotSettings(val group: String) {
     }
 
     fun getStringValueN(key: String): String? {
-        val indexes = mutableListOf<Int>()
-        key.forEachIndexed { index, c ->
-            if (index != 0 && c.isUpperCase() && !key[index - 1].isUpperCase())
-                indexes.add(index)
-        }
-        val newKey = StringBuilder(key)
-        indexes.forEachIndexed { index, i ->
-            newKey.insert(index + i, "_")
-        }
-        return dotEnv[transformedGroup + "_" + newKey.toString().uppercase()]
+        val finalKey = if (splitOnCammelCase) { key.camelToSnake() } else { key }
+        return dotEnv[transformedGroup + "_" + finalKey.uppercase()]
     }
 }

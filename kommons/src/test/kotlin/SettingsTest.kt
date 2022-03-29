@@ -33,6 +33,7 @@ class SettingsTest {
         injectEnvironmentVariable("TEST_NULLABLE2", "setanyway")
         injectEnvironmentVariable("TEST_CAMEL_CASE_VAR", "hi")
 
+        BotSettings.globalSplitOnCammelCase = true
         val settings = SettingsToTest()
         assertEquals(settings.botToken, token)
         assertEquals(settings.name, name)
