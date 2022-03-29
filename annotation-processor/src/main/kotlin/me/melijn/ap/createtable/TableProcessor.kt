@@ -8,47 +8,56 @@ import com.google.devtools.ksp.validate
 import me.melijn.ap.util.appendLine
 
 class TableProcessor(
-    codeGenerator: CodeGenerator,
-    val logger: KSPLogger,
-    val location: String,
-
+    private val codeGenerator: CodeGenerator,
+    private val logger: KSPLogger,
+    private val location: String,
 ) : SymbolProcessor{
 
-    val createTablesModuleFile =
-        codeGenerator.createNewFile(Dependencies(false), location, "CreateTablesModule")
+    private var count = 0
+    var lines = mutableListOf<String>()
 
     init {
-        createTablesModuleFile.appendLine("package ${location}\n")
-        createTablesModuleFile.appendLine(
-            """
-                import org.jetbrains.exposed.sql.SchemaUtils
-               """.trimIndent()
-        )
-        createTablesModuleFile.appendLine("object CreateTablesModule {\n")
-        createTablesModuleFile.appendLine("    fun createTables() {")
-        createTablesModuleFile.appendLine("        SchemaUtils.create(")
+        logger.info("generating table file..")
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation(CreateTable::class.java.name).toList()
-        symbols
-            .filter { it is KSClassDeclaration && it.validate() }
-            .forEach { it.accept(CreateTableVisitor(), Unit) }
         val ret = symbols.filter { !it.validate() }.toList()
 
-        if (symbols.isNotEmpty()) {
+        val process = symbols
+            .filter { it is KSClassDeclaration && it.validate() }
+
+        if (process.isNotEmpty()) {
+            val createTablesModuleFile =
+                codeGenerator.createNewFile(Dependencies(false), location, "CreateTablesModule${count}")
+            createTablesModuleFile.appendLine("package ${location}\n")
+            createTablesModuleFile.appendLine(
+                """
+                import org.jetbrains.exposed.sql.SchemaUtils
+               """.trimIndent()
+            )
+            createTablesModuleFile.appendLine("class CreateTablesModule${count} : ${CreateTableInterface::class.java.name}() {\n")
+            createTablesModuleFile.appendLine("    override fun createTables() {")
+            createTablesModuleFile.appendLine("        SchemaUtils.create(")
+
+            process.forEach { it.accept(CreateTableVisitor(lines), Unit) }
+            createTablesModuleFile.appendLine(lines.joinToString("\n"))
+
             createTablesModuleFile.appendLine("        )")
             createTablesModuleFile.appendLine("    }")
             createTablesModuleFile.appendLine("}")
             createTablesModuleFile.close()
+
+            logger.info("round $count processed ${lines.size} annotations")
         }
+
         return ret
     }
 
-    inner class CreateTableVisitor : KSVisitorVoid() {
+    inner class CreateTableVisitor(private val lines: MutableList<String>) : KSVisitorVoid() {
         override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
             val className = classDeclaration.qualifiedName?.asString()?: throw IllegalStateException("Annotation not on class ?")
-            createTablesModuleFile.appendLine("            $className,")
+            lines.add("            $className,")
         }
     }
 }
