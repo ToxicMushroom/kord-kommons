@@ -36,7 +36,7 @@ class TableProcessor(
                 import org.jetbrains.exposed.sql.SchemaUtils
                """.trimIndent()
             )
-            createTablesModuleFile.appendLine("class CreateTablesModule${count} : ${CreateTableInterface::class.java.name}() {\n")
+            createTablesModuleFile.appendLine("class CreateTablesModule${count} : ${CreateTableInterface::class.java.name} {\n")
             createTablesModuleFile.appendLine("    override fun createTables() {")
             createTablesModuleFile.appendLine("        SchemaUtils.create(")
 
