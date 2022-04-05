@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    id("org.jetbrains.kotlin.jvm") version "1.6.20"
     id("maven-publish")
 }
 
 group = "me.melijn.kordkommons"
-version = "1.1.1"
+version = "1.1.2"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -17,8 +17,8 @@ repositories {
     mavenCentral()
 }
 
-val kotlin = "1.6.10"
-val kotlinX = "1.6.0-native-mt" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+val kotlin = "1.6.20"
+val kotlinX = "1.6.1" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 
 dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
