@@ -3,9 +3,8 @@ package me.melijn.kordkommons.async
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-class SafeList<E> {
+class SafeList<E>(private val lock: Mutex = Mutex()) {
 
-    val lock = Mutex()
     private val list = ArrayList<E>()
 
     val size: Int
@@ -53,6 +52,10 @@ class SafeList<E> {
         list.clear()
     }
 
+    suspend fun take(amount: Int): List<E> = lock.withLock {
+        return list.take(amount)
+    }
+
     suspend fun removeFirstAndGetNextOrNull(amount: Int): E? = lock.withLock {
         for (i in 0 until (amount - 1)) {
             if (list.size < 1) break
@@ -87,7 +90,15 @@ class SafeList<E> {
         return list.firstOrNull(function)
     }
 
+    suspend fun firstOrNull(): E? = lock.withLock {
+        return list.firstOrNull()
+    }
+
     suspend fun removeAll(toRemove: List<E>) = lock.withLock {
-        list.removeAll(toRemove)
+        list.removeAll(toRemove.toSet())
+    }
+
+    suspend fun addAll(elements: Collection<E>) = lock.withLock {
+        list.addAll(elements)
     }
 }
