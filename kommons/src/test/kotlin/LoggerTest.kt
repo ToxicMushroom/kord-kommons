@@ -15,7 +15,7 @@ class LoggerTest {
 
         val logger = logger()
         val logger2 by Log
-        logger.info {"hello" } // output will go into the baos stream
+        logger.info { "hello" } // output will go into the baos stream
         logger2.warn { "world" } // output will go into the baos stream
 
         /** Tests **/

@@ -6,6 +6,7 @@ import kotlin.test.assertEquals
 class L10nTest {
 
     val te = "te"
+
     @Test
     fun test() {
        val translated = L10n.translate(Locale.US, "${te}st")
