@@ -1,6 +1,5 @@
 package me.melijn.kordkommons.utils
 
-import java.lang.StringBuilder
 import kotlin.math.pow
 
 
@@ -19,6 +18,52 @@ object StringUtils {
             bytes < 0xfffccccccccccccL -> String.format("%.3f PiB", (bytes shr 10) / 2.0.pow(40.0))
             else -> String.format("%.3f EiB", (bytes shr 20) / 2.0.pow(40.0))
         }
+    }
+
+    /**
+     * Tries to find an index in [text] between [splitAtLeast] and [text].length to split on,
+     *   splits are preferred on punctuation like . , ! ? and spaces.
+     * @param text text in which an index needs to be found.
+     * @param splitAtLeast minimum split index, will be ignored if no good split places are found.
+     *
+     * @return best split index
+     */
+    fun getSplitIndex(text: String, splitAtLeast: Int): Int {
+        var index = text.lastIndexOf("\n")
+        if (index < splitAtLeast) index = text.lastIndexOf(". ")
+        if (index < splitAtLeast) index = text.lastIndexOf(" ")
+        if (index < splitAtLeast) index = text.lastIndexOf(",")
+        if (index < splitAtLeast) index = text.lastIndexOf("? ")
+        if (index < splitAtLeast) index = text.lastIndexOf("! ")
+        if (index < splitAtLeast) index = text.lastIndexOf("-")
+        if (index < splitAtLeast) index = text.length - 1
+        return index
+    }
+
+    /**
+     * Splits string into pieces, will make sure each piece is between [splitAtLeast] and [maxLength]
+     * furthermore concatenating all strings in the returned list will equal the [message].
+     * Splits prefer punctuation and spaces.
+     *
+     * @param message message to chop into pieces
+     * @param splitAtLeast minimum piece size
+     * @param maxLength maximum piece size
+     *
+     * @return list of pieces
+     */
+    fun splitMessage(message: String, splitAtLeast: Int = 1800, maxLength: Int = 2000): List<String> {
+        var msg = message
+        val messages = ArrayList<String>()
+        while (msg.length > maxLength) {
+            val findLastNewline = msg.substring(0, maxLength - 1)
+
+            val index = getSplitIndex(findLastNewline, splitAtLeast)
+
+            messages.add(msg.substring(0, index))
+            msg = msg.substring(index)
+        }
+        if (msg.isNotEmpty()) messages.add(msg)
+        return messages
     }
 }
 
