@@ -7,6 +7,8 @@ import io.lettuce.core.RedisURI
 import io.lettuce.core.SetArgs
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.api.async.RedisAsyncCommands
+import io.lettuce.core.codec.CompressionCodec
+import io.lettuce.core.codec.StringCodec
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.future.await
 import me.melijn.kordkommons.async.TaskManager
@@ -39,6 +41,7 @@ class DriverManager(
 
     var redisClient: RedisClient? = null
     var redisConnection: StatefulRedisConnection<String, String?>? = null
+    var compressionRedisConnection: StatefulRedisConnection<String, String?>? = null
 
     init {
         // HIKARI
@@ -54,20 +57,20 @@ class DriverManager(
 
         if (redisConfig.enabled) {
             logger.info("Connecting to redis..")
-            connectRedis(redisConfig.host, redisConfig.port, redisConfig.user, redisConfig.password)
+            connectRedis(redisConfig)
         }
     }
 
-    private fun connectRedis(host: String, port: Int, user: String?, password: String) {
+    private fun connectRedis(redisConfig: RedisConfig) {
         var uriBuilder = RedisURI.builder()
-            .withHost(host)
-            .withPort(port)
+            .withHost(redisConfig.host)
+            .withPort(redisConfig.port)
 
-        if (password.isNotBlank()) {
-            uriBuilder = if (user?.isBlank() == false) {
-                uriBuilder.withAuthentication(user, password)
+        if (redisConfig.password.isNotBlank()) {
+            uriBuilder = if (redisConfig.user?.isBlank() == false) {
+                uriBuilder.withAuthentication(redisConfig.user, redisConfig.password)
             } else {
-                uriBuilder.withPassword(password.toCharArray())
+                uriBuilder.withPassword(redisConfig.password.toCharArray())
             }
         }
 
@@ -80,12 +83,15 @@ class DriverManager(
 
         try {
             redisConnection = redisClient.connect()
+            compressionRedisConnection = redisClient?.connect(
+                CompressionCodec.valueCompressor(StringCodec.UTF8, CompressionCodec.CompressionType.GZIP)
+            )
             logger.info("Connected to redis")
 
         } catch (e: Throwable) {
             TaskManager.async {
                 logger.warn("Retrying to connect to redis..")
-                recursiveConnectRedis(host, port)
+                recursiveConnectRedis(redisConfig.host, redisConfig.port)
                 logger.warn("Retrying to connect to redis has succeeded!")
             }
         }
@@ -94,6 +100,9 @@ class DriverManager(
     private suspend fun recursiveConnectRedis(host: String, port: Int) {
         try {
             redisConnection = redisClient?.connect()
+            compressionRedisConnection = redisClient?.connect(
+                CompressionCodec.valueCompressor(StringCodec.UTF8, CompressionCodec.CompressionType.GZIP)
+            )
         } catch (e: Throwable) {
             delay(5_000)
             recursiveConnectRedis(host, port)
@@ -302,16 +311,22 @@ class DriverManager(
         afterConnectToBeExecutedQueries.add(0, "DROP TABLE $table")
     }
 
-    fun getOpenRedisConnection(): RedisAsyncCommands<String, String?>? {
-        if (redisConnection?.async()?.isOpen == true) {
-            return redisConnection?.async()
+    fun getOpenRedisConnection(compress: Boolean = false): RedisAsyncCommands<String, String?>? {
+        if (compress){
+            if (compressionRedisConnection?.async()?.isOpen == true) {
+                return compressionRedisConnection?.async()
+            }
+        } else {
+            if (redisConnection?.async()?.isOpen == true) {
+                return redisConnection?.async()
+            }
         }
         return null
     }
 
     // ttl: minutes
-    fun setCacheEntry(key: String, value: String, ttl: Int? = null, ttlUnit: TimeUnit = TimeUnit.MINUTES) {
-        val async = getOpenRedisConnection() ?: return
+    fun setCacheEntry(key: String, value: String, ttl: Int? = null, ttlUnit: TimeUnit = TimeUnit.MINUTES, compress: Boolean = false) {
+        val async = getOpenRedisConnection(compress) ?: return
         if (ttl == null) async.set(key, value)
         else {
             val ttlSeconds = TimeUnit.SECONDS.convert(ttl.toLong(), ttlUnit)
@@ -319,15 +334,15 @@ class DriverManager(
         }
     }
 
-    fun setCacheEntryWithArgs(key: String, value: String, args: SetArgs? = null) {
-        val async = getOpenRedisConnection() ?: return
+    fun setCacheEntryWithArgs(key: String, value: String, args: SetArgs? = null, compress: Boolean = false) {
+        val async = getOpenRedisConnection(compress) ?: return
         if (args == null) async.set(key, value)
         else async.set(key, value, args)
     }
 
     // ttl: minutes
-    suspend fun getCacheEntry(key: String, ttlMinutes: Int? = null): String? {
-        val commands = getOpenRedisConnection() ?: return null
+    suspend fun getCacheEntry(key: String, ttlMinutes: Int? = null, compress: Boolean = false): String? {
+        val commands = getOpenRedisConnection(compress) ?: return null
         val result = commands
             .get(key)
             .await()
