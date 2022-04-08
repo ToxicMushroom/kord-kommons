@@ -2,7 +2,6 @@ package me.melijn.kordkommons.environment
 
 import io.github.cdimascio.dotenv.dotenv
 import me.melijn.kordkommons.utils.camelToSnake
-import java.lang.StringBuilder
 import kotlin.properties.ReadOnlyProperty
 
 /**
@@ -26,6 +25,16 @@ open class BotSettings(val group: String) {
             this.ignoreIfMissing = true
         }
         var globalSplitOnCammelCase = false
+    }
+
+    fun stringList(key: String, default: List<String> = emptyList()) = ReadOnlyProperty<BotSettings, List<String>> { _, _ ->
+        var i = 0
+        val list = mutableListOf<String>()
+        var value = getStringValueN(key + i++)?.also { list.add(it) }
+        while (value != null) {
+            value = getStringValueN(key + i++)?.also { list.add(it) }
+        }
+        list.takeIf { it.isNotEmpty() } ?: default
     }
 
     fun string(key: String, default: String? = null) = ReadOnlyProperty<BotSettings, String> { _, _ ->
@@ -59,8 +68,8 @@ open class BotSettings(val group: String) {
             enumValues.firstOrNull { value.equals(it.toString(), true) }
                 ?: throw IllegalArgumentException(
                     "the env entry: ${group}_${key}=${value} has an incorrect value," +
-                            " the value should be one of the following: " +
-                            enumValues.joinToString()
+                        " the value should be one of the following: " +
+                        enumValues.joinToString()
                 )
         }
 
@@ -83,7 +92,11 @@ open class BotSettings(val group: String) {
     }
 
     fun getStringValueN(key: String): String? {
-        val finalKey = if (splitOnCammelCase) { key.camelToSnake() } else { key }
+        val finalKey = if (splitOnCammelCase) {
+            key.camelToSnake()
+        } else {
+            key
+        }
         return dotEnv[transformedGroup + "_" + finalKey.uppercase()]
     }
 }
