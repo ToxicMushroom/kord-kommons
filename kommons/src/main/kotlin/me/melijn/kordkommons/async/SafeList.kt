@@ -16,6 +16,12 @@ class SafeList<E>(private val lock: Mutex = Mutex()) {
         return list[index] ?: throw IndexOutOfBoundsException()
     }
 
+    suspend fun getAll(indexes: List<Int>): List<E> = lock.withLock {
+        val elements = ArrayList<E>(indexes.size)
+        for (i in indexes) elements[i] = list[i] ?: throw IndexOutOfBoundsException()
+        return elements
+    }
+
     suspend fun getOrNull(index: Int): E? = lock.withLock {
         return list[index]
     }
