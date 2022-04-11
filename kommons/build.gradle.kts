@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "me.melijn.kordkommons"
-version = "1.1.7"
+version = "1.1.9"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -28,6 +28,9 @@ dependencies {
     // Coroutine utils
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin")
     testImplementation("ch.qos.logback:logback-classic:1.2.11")
