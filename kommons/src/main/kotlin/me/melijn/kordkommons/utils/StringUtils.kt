@@ -4,6 +4,7 @@ import kotlin.math.pow
 
 
 val SPACE_PATTERN = Regex("\\s+")
+const val SPLIT_HINT = "`SPLIT_HERE`"
 
 object StringUtils {
 
@@ -22,14 +23,15 @@ object StringUtils {
 
     /**
      * Tries to find an index in [text] between [splitAtLeast] and [text].length to split on,
-     *   splits are preferred on punctuation like . , ! ? and spaces.
+     *   splits are preferred on punctuation like . , ! ? and spaces but above all [SPLIT_HINT].
      * @param text text in which an index needs to be found.
      * @param splitAtLeast minimum split index, will be ignored if no good split places are found.
      *
      * @return best split index
      */
     fun getSplitIndex(text: String, splitAtLeast: Int): Int {
-        var index = text.lastIndexOf("\n")
+        var index = text.lastIndexOf(SPLIT_HINT)
+        if (index < splitAtLeast) index = text.lastIndexOf("\n")
         if (index < splitAtLeast) index = text.lastIndexOf(". ")
         if (index < splitAtLeast) index = text.lastIndexOf(" ")
         if (index < splitAtLeast) index = text.lastIndexOf(",")
@@ -65,6 +67,56 @@ object StringUtils {
         if (msg.isNotEmpty()) messages.add(msg)
         return messages
     }
+
+    fun splitMessageWithCodeBlocks(
+        message: String,
+        splitAtLeast: Int = 1800,
+        maxLength: Int = 1970,
+        language: String? = null
+    ): List<String> {
+        val lang = language ?: message.drop(3).takeWhile { it != '\n'}.takeIf { !it.contains(" ") } ?: ""
+        val msg = message.removePrefix("```${lang}").removeSuffix("```")
+        return splitMessage(msg, splitAtLeast, maxLength).map { "```${lang}\n${it}```" }
+    }
+}
+
+/**
+ * @return whether the string contains an [Int]
+ */
+fun String.isNumber(): Boolean {
+    return toIntOrNull() != null
+}
+
+/**
+ * @return whether the string contains an [Int] and that the value of that int is >= 0
+ */
+fun String.isPositiveNumber(): Boolean {
+    val number = toIntOrNull()
+    return number != null && number >= 0
+}
+
+/**
+ * @return whether the string contains an [Int] and that the value of that int is <= 0
+ */
+fun String.isNegativeNumber(): Boolean {
+    val number = toIntOrNull()
+    return number != null && number <= 0
+}
+
+/**
+ * @return whether the string contains an [Int] and that the value of that int is > 0
+ */
+fun String.isStrictPositiveNumber(): Boolean {
+    val number = toIntOrNull()
+    return number != null && number > 0
+}
+
+/**
+ * @return whether the string contains an [Int] and that the value of that int is < 0
+ */
+fun String.isStrictNegativeNumber(): Boolean {
+    val number = toIntOrNull()
+    return number != null && number < 0
 }
 
 fun String.remove(vararg strings: String, ignoreCase: Boolean = false): String {
@@ -116,6 +168,10 @@ fun String.escapeMarkdown(): String {
         .replace("`", "'")
 }
 
+fun String.escapeCodeBlock(): String {
+    return this.replace("`", "'")
+}
+
 fun String.toUpperWordCase(): String {
     var previous = ' '
     var newString = ""
@@ -147,3 +203,5 @@ fun String.camelToSnake(): String {
     camelIndexes.forEachIndexed { index, i -> snakeBuilder.insert(index + i, "_") }
     return snakeBuilder.toString()
 }
+
+fun ansiFormat(colorCode: String) = "\u001B[0;${colorCode}m"
