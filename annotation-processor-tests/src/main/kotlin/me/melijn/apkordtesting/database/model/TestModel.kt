@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 @Cacheable
 object TestModel : Table("stuff") {
 
-    val id = uuid("id")
+    val id = uuid("id").entityId()
     val name = text("name")
     val added = datetime("added")
 
