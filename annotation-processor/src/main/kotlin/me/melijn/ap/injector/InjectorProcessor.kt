@@ -73,8 +73,11 @@ class InjectorProcessor(
             singleLines.add("         single { $className(${function.parameters.joinToString(", ") { "get()" }}) } bind $className::class\n")
 
             val create = annotation.arguments.firstOrNull()?.value as Boolean?
-            if (create == true)
-                injectLines.add("         inject<$className>($className::class.java) \n")
+            if (create == true) {
+                val varName = "s${injectLines.size}"
+                injectLines.add("         val $varName by inject<$className>($className::class.java)\n")
+                injectLines.add("         $varName.toString()\n")
+            }
         }
     }
 }
