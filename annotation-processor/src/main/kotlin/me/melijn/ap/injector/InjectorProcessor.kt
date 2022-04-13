@@ -67,10 +67,14 @@ class InjectorProcessor(
 
         override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
             val parent = function.parentDeclaration as KSClassDeclaration
+            val annotation = parent.annotations.firstOrNull { it.shortName.asString()==Inject::class.java.simpleName } ?: return
 
             val className = parent.qualifiedName?.asString() ?: throw IllegalStateException("Annotation not on class ?")
             singleLines.add("         single { $className(${function.parameters.joinToString(", ") { "get()" }}) } bind $className::class\n")
-            injectLines.add("         inject<$className>($className::class.java) \n")
+
+            val create = annotation.arguments.firstOrNull()?.value as Boolean?
+            if (create == true)
+                injectLines.add("         inject<$className>($className::class.java) \n")
         }
     }
 }

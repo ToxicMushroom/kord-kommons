@@ -16,7 +16,7 @@ class Tests : KoinComponent {
         delay(2000)
         val readyListener by inject<ReadyListener>()
         val duration = System.currentTimeMillis() - readyListener.time
-        assert(duration > 1000)
+        require(duration > 1000) {"stinky, readyListener was not initialized 2 seconds ago"}
     }
 
 }
