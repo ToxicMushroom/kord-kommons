@@ -16,7 +16,8 @@ class InjectorProcessor(
 
     var count = 0
 
-    var lines = mutableListOf<String>()
+    var singleLines = mutableListOf<String>()
+    var injectLines = mutableListOf<String>()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation(Inject::class.java.name).toList()
@@ -35,15 +36,19 @@ class InjectorProcessor(
             import ${InjectorInterface::class.java.name}
             import org.koin.dsl.bind
             import org.koin.dsl.module
+            import org.koin.java.KoinJavaComponent.inject
            
            """.trimIndent()
             )
             injectKoinModuleFile.appendLine("class InjectionKoinModule${count} : ${InjectorInterface::class.java.simpleName}() {\n")
             injectKoinModuleFile.appendLine("    override val module = module {")
 
-            process.forEach { it.accept(InjectorVisitor(lines), Unit) }
-            injectKoinModuleFile.appendLine(lines.joinToString("\n"))
+            process.forEach { it.accept(InjectorVisitor(singleLines, injectLines), Unit) }
+            injectKoinModuleFile.appendLine(singleLines.joinToString("\n"))
 
+            injectKoinModuleFile.appendLine("    }")
+            injectKoinModuleFile.appendLine("    override fun initInjects() {")
+            injectKoinModuleFile.appendLine(injectLines.joinToString("\n"))
             injectKoinModuleFile.appendLine("    }")
             injectKoinModuleFile.appendLine("}")
             injectKoinModuleFile.close()
@@ -55,7 +60,7 @@ class InjectorProcessor(
     }
 
 
-    inner class InjectorVisitor(private val lines: MutableList<String>) : KSVisitorVoid() {
+    inner class InjectorVisitor(private val singleLines: MutableList<String>, private val injectLines: MutableList<String>) : KSVisitorVoid() {
         override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
             classDeclaration.primaryConstructor!!.accept(this, data)
         }
@@ -64,7 +69,8 @@ class InjectorProcessor(
             val parent = function.parentDeclaration as KSClassDeclaration
 
             val className = parent.qualifiedName?.asString() ?: throw IllegalStateException("Annotation not on class ?")
-            lines.add("         single { $className(${function.parameters.joinToString(", ") { "get()" }}) } bind $className::class\n")
+            singleLines.add("         single { $className(${function.parameters.joinToString(", ") { "get()" }}) } bind $className::class\n")
+            injectLines.add("         inject<$className>($className::class.java) \n")
         }
     }
 }

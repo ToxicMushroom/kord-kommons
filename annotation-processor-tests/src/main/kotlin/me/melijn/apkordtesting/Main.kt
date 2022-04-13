@@ -1,11 +1,13 @@
 package me.melijn.apkordtesting
 
 import me.melijn.ap.createtable.CreateTableInterface
+import me.melijn.ap.injector.InjectorInterface
 import me.melijn.gen.Settings
 import me.melijn.kordkommons.database.ConfigUtil
 import me.melijn.kordkommons.database.DriverManager
 import me.melijn.kordkommons.redis.RedisConfig
 import me.melijn.kordkommons.utils.ReflectUtil
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -15,7 +17,7 @@ val koin = startKoin {
 
 }
 
-fun main() {
+suspend fun main() {
     koin.modules(module {
         single { Settings } bind Settings::class
     })
@@ -25,7 +27,14 @@ fun main() {
         single { driverManager } bind DriverManager::class
     })
 
-    Tests()
+    val injectorInterface = ReflectUtil.getInstanceOfKspClass<InjectorInterface>(
+        "me.melijn.gen", "InjectionKoinModule"
+    )
+    GlobalContext.loadKoinModules(injectorInterface.module)
+    injectorInterface.initInjects()
+
+    val readyListener by inject<Tests>(Tests::class.java)
+    readyListener.tests()
 }
 
 fun initDriverManager(settings: Settings): DriverManager {
