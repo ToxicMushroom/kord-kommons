@@ -1,5 +1,7 @@
 package me.melijn.kordkommons.utils
 
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.pow
 
 
@@ -8,16 +10,28 @@ const val SPLIT_HINT = "`SPLIT_HERE`"
 
 object StringUtils {
 
-    fun humanReadableByteCountBin(bytes: Int): String = humanReadableByteCountBin(bytes.toLong())
-    fun humanReadableByteCountBin(bytes: Long): String {
+    fun humanReadableByteCountBin(bytes: Int, locale: Locale = Locale.getDefault()): String =
+        humanReadableByteCountBin(bytes.toLong(), locale)
+
+    /**
+     * Formats byte count into the closest most readable format (e.g. KibiByte, MibiByte, ...)
+     * Everything after 3 decimal places is cut off
+     * @param bytes byte count to format
+     * @param locale optional locale for the decimal separator that's used
+     *
+     * example: humanReadableByteCountBin(4121672, Locale("us")) => "3.931 MiB"
+     *
+     * @return formatted string
+     */
+    fun humanReadableByteCountBin(bytes: Long, locale: Locale = Locale.getDefault()): String {
         return when {
             bytes < 1024L -> "$bytes B"
-            bytes < 0xfffccccccccccccL shr 40 -> String.format("%.3f KiB", bytes / 2.0.pow(10.0))
-            bytes < 0xfffccccccccccccL shr 30 -> String.format("%.3f MiB", bytes / 2.0.pow(20.0))
-            bytes < 0xfffccccccccccccL shr 20 -> String.format("%.3f GiB", bytes / 2.0.pow(30.0))
-            bytes < 0xfffccccccccccccL shr 10 -> String.format("%.3f TiB", bytes / 2.0.pow(40.0))
-            bytes < 0xfffccccccccccccL -> String.format("%.3f PiB", (bytes shr 10) / 2.0.pow(40.0))
-            else -> String.format("%.3f EiB", (bytes shr 20) / 2.0.pow(40.0))
+            bytes < 0xfffccccccccccccL shr 40 -> String.format(locale, "%.3f KiB", bytes / 2.0.pow(10.0))
+            bytes < 0xfffccccccccccccL shr 30 -> String.format(locale, "%.3f MiB", bytes / 2.0.pow(20.0))
+            bytes < 0xfffccccccccccccL shr 20 -> String.format(locale, "%.3f GiB", bytes / 2.0.pow(30.0))
+            bytes < 0xfffccccccccccccL shr 10 -> String.format(locale, "%.3f TiB", bytes / 2.0.pow(40.0))
+            bytes < 0xfffccccccccccccL -> String.format(locale, "%.3f PiB", (bytes shr 10) / 2.0.pow(40.0))
+            else -> String.format(locale, "%.3f EiB", (bytes shr 20) / 2.0.pow(40.0))
         }
     }
 
@@ -74,7 +88,7 @@ object StringUtils {
         maxLength: Int = 1970,
         language: String? = null
     ): List<String> {
-        val lang = language ?: message.drop(3).takeWhile { it != '\n'}.takeIf { !it.contains(" ") } ?: ""
+        val lang = language ?: message.drop(3).takeWhile { it != '\n' }.takeIf { !it.contains(" ") } ?: ""
         val msg = message.removePrefix("```${lang}").removeSuffix("```")
         return splitMessage(msg, splitAtLeast, maxLength).map { "```${lang}\n${it}```" }
     }
