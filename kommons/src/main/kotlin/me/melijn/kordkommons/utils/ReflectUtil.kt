@@ -1,9 +1,12 @@
 package me.melijn.kordkommons.utils
 
+import me.melijn.kordkommons.logger.Log
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 object ReflectUtil {
+
+    val logger by Log
 
     /**
      * @param packageName package the generated classes resides in
@@ -52,8 +55,16 @@ object ReflectUtil {
             ?: return emptySequence()
 
         val reader = BufferedReader(InputStreamReader(stream))
+
+        val stream2 = ClassLoader.getSystemClassLoader()
+            .getResourceAsStream("/" + packageName.replace("[.]".toRegex(), "/"))
+            ?: return emptySequence()
+        logger.debug { "Found files in /$packageName" }
+
         return reader.lineSequence()
+            .also { logger.debug { "Found files in $packageName: ${it.joinToString()}" } }
             .filter { line: String -> line.endsWith(".class") }
+            .also { logger.debug { "Found classes in $packageName: ${it.joinToString()}" } }
             .map { line: String ->
                 getClass(
                     line,
@@ -61,13 +72,14 @@ object ReflectUtil {
                 )
             }
             .filter { it != null }
+            .also { logger.debug { "Turned into Class Objects from $packageName: ${it.joinToString()}" } }
     }
 
     private fun getClass(className: String, packageName: String): Class<*>? {
         try {
             return Class.forName(
                 packageName + "."
-                    + className.substring(0, className.lastIndexOf('.'))
+                        + className.substring(0, className.lastIndexOf('.'))
             )
         } catch (e: ClassNotFoundException) {
             // handle the exception
