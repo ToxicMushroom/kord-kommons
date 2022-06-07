@@ -18,7 +18,7 @@ repositories {
 }
 
 val ksp = "1.6.10-1.0.4"
-val kordEx = "1.5.2-SNAPSHOT"
+val kordEx = "1.5.4-SNAPSHOT"
 
 dependencies {
     implementation(kotlin("stdlib"))

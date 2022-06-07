@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.melijn.kordkommons"
-version = "0.0.1"
+version = "0.0.2"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -20,7 +20,7 @@ val kotlin = "1.6.20"
 val kotlinX = "1.6.1"
 val ksp = "1.6.20-1.0.4"
 val koin = "3.1.5"
-val kordKommons = "1.2.1"
+val kordKommons = "1.2.3"
 val apKordVersion = "0.1.3"
 val redgresKommons = "0.0.3"
 
