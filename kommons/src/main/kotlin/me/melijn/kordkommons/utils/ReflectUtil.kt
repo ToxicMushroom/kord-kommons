@@ -39,16 +39,15 @@ object ReflectUtil {
      * @return the class object of the resolved class
      */
     fun findCompleteGeneratedKspClass(packageName: String, baseClassName: String): Class<*> {
-        return findAllClassesUsingClassLoader(packageName)
-            .filterNotNull()
-            .filter { it.toString().contains(baseClassName, true) && !it.toString().contains("$") }
-            .maxByOrNull {
-                it.name.replace(".*${baseClassName}(\\d+)".toRegex()) { res ->
-                    res.groups[1]?.value ?: ""
-                }.toInt()
-            } ?: throw IllegalArgumentException("Couldn't resolve a class object for $baseClassName in $packageName")
+        var i = 0
+        val sysCl = ClassLoader.getSystemClassLoader()
+        while (sysCl.loadClass("$packageName.$baseClassName${i + 1}") != null) { i++ }
+        return sysCl.loadClass("$packageName.$baseClassName${i}")
     }
 
+    /**
+     * Broken for jar files
+     */
     fun findAllClassesUsingClassLoader(packageName: String): Sequence<Class<*>?> {
         val stream = ClassLoader.getSystemClassLoader()
             .getResourceAsStream(packageName.replace("[.]".toRegex(), "/"))
@@ -56,15 +55,10 @@ object ReflectUtil {
 
         val reader = BufferedReader(InputStreamReader(stream))
 
-        val stream2 = ClassLoader.getSystemClassLoader()
-            .getResourceAsStream("/" + packageName.replace("[.]".toRegex(), "/"))
-            ?: return emptySequence()
-        logger.debug { "Found files in /$packageName" }
-
         return reader.lineSequence()
-            .also { logger.debug { "Found files in $packageName: ${it.joinToString()}" } }
+            .map { logger.debug { "Found file in $packageName: $it" }; it }
             .filter { line: String -> line.endsWith(".class") }
-            .also { logger.debug { "Found classes in $packageName: ${it.joinToString()}" } }
+            .map { logger.debug { "Found class in $packageName: $it" }; it }
             .map { line: String ->
                 getClass(
                     line,
@@ -72,7 +66,7 @@ object ReflectUtil {
                 )
             }
             .filter { it != null }
-            .also { logger.debug { "Turned into Class Objects from $packageName: ${it.joinToString()}" } }
+            .map { logger.debug { "Turned into Class Object from $packageName: $it" }; it }
     }
 
     private fun getClass(className: String, packageName: String): Class<*>? {
