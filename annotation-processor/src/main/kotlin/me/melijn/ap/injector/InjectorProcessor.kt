@@ -8,7 +8,10 @@ import me.melijn.ap.util.appendLine
 class InjectorProcessor(
     val codeGenerator: CodeGenerator,
     val logger: KSPLogger,
-    val location: String
+    val location: String,
+    val extraImports: String,
+    val extraInterfaces: String,
+    val initPlaceholder: String
 ) : SymbolProcessor {
 
     var count = 0
@@ -33,11 +36,11 @@ class InjectorProcessor(
             import ${InjectorInterface::class.java.name}
             import org.koin.dsl.bind
             import org.koin.dsl.module
-            import org.koin.java.KoinJavaComponent.inject
-           
-           """.trimIndent()
+            $extraImports
+
+            """.trimIndent()
             )
-            injectKoinModuleFile.appendLine("class InjectionKoinModule${count} : ${InjectorInterface::class.java.simpleName}() {\n")
+            injectKoinModuleFile.appendLine("class InjectionKoinModule${count} : ${InjectorInterface::class.java.simpleName}(), ${extraInterfaces} {\n")
             injectKoinModuleFile.appendLine("    override val module = module {")
 
             process.forEach { it.accept(InjectorVisitor(singleLines, injectLines), Unit) }
@@ -52,10 +55,8 @@ class InjectorProcessor(
             count++
         }
 
-
         return ret
     }
-
 
     inner class InjectorVisitor(private val singleLines: MutableList<String>, private val injectLines: MutableList<String>) : KSVisitorVoid() {
         override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
@@ -73,8 +74,10 @@ class InjectorProcessor(
             val create = annotation.arguments.firstOrNull()?.value as Boolean?
             if (create == true) {
                 val varName = "s${injectLines.size}"
-                injectLines.add("         val $varName by inject<$className>($className::class.java)\n")
-                injectLines.add("         $varName.toString()\n")
+                val line = initPlaceholder
+                    .replace("%varName%", varName)
+                    .replace("%className%", className)
+                injectLines.add(line)
             }
         }
     }
