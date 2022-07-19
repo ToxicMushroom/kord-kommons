@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
     id("maven-publish")
 }
 
 group = "me.melijn.kordkommons"
-version = "0.0.4"
+version = "0.1.0"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -17,26 +17,26 @@ repositories {
     mavenCentral()
 }
 
-val kotlin = "1.6.10"
-val kotlinX = "1.6.0-native-mt" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+val kotlin = "1.7.10"
+val kotlinX = "1.6.4" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 
 dependencies {
     implementation(project(":kommons"))
 
     // Database Postgres
     // https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
-    implementation("org.jetbrains.exposed:exposed-core:0.37.3")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.37.3")
+    implementation("org.jetbrains.exposed:exposed-core:0.38.2")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.38.2")
 
     // https://search.maven.org/artifact/com.zaxxer/HikariCP
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
-    implementation("org.postgresql:postgresql:42.3.3")
+    implementation("org.postgresql:postgresql:42.4.0")
 
     // Redis
     // https://mvnrepository.com/artifact/io.lettuce/lettuce-core
-    implementation("io.lettuce:lettuce-core:6.1.8.RELEASE")
+    implementation("io.lettuce:lettuce-core:6.2.0.RELEASE")
 
     // Coroutine utils
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")

@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm") version "1.7.10"
     id("maven-publish")
 }
 
 group = "me.melijn.kordkommons"
-version = "0.1.9"
+version = "0.2.1"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -15,7 +15,7 @@ repositories {
     mavenCentral()
 }
 
-val ksp = "1.6.20-1.0.4"
+val ksp = "1.7.10-1.0.6"
 val koin = "3.1.5"
 
 dependencies {

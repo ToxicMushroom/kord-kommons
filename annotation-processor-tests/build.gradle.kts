@@ -1,11 +1,11 @@
 plugins {
-    kotlin("jvm") version "1.6.20"
-    id("com.google.devtools.ksp") version "1.6.20-1.0.4"
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("jvm") version "1.7.10"
+    id("com.google.devtools.ksp") version "1.7.10-1.0.6"
+    kotlin("plugin.serialization") version "1.7.10"
 }
 
 group = "me.melijn.kordkommons"
-version = "0.0.2"
+version = "0.1.0"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -16,9 +16,9 @@ repositories {
     mavenCentral()
 }
 
-val kotlin = "1.6.20"
+val kotlin = "1.7.10"
 val kotlinX = "1.6.1"
-val ksp = "1.6.20-1.0.4"
+val ksp = "1.7.10-1.0.6"
 val koin = "3.1.5"
 val kordKommons = "1.2.3"
 val apKordVersion = "0.1.3"
@@ -33,7 +33,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 
     implementation("com.google.devtools.ksp:symbol-processing-api:$ksp")
     implementation("io.insert-koin:koin-core:$koin")
@@ -45,18 +45,18 @@ dependencies {
 //    implementation(apKordex)
 //    ksp(apKordex)
 
-    implementation("org.jetbrains.exposed:exposed-core:0.37.3")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.37.3")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.37.3")
+    implementation("org.jetbrains.exposed:exposed-core:0.38.2")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.38.2")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.38.2")
 
     // https://search.maven.org/artifact/com.zaxxer/HikariCP
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
-    implementation("org.postgresql:postgresql:42.3.3")
+    implementation("org.postgresql:postgresql:42.4.0")
 
     // https://mvnrepository.com/artifact/io.lettuce/lettuce-core
-    implementation("io.lettuce:lettuce-core:6.1.8.RELEASE")
+    implementation("io.lettuce:lettuce-core:6.2.0.RELEASE")
 
     // https://github.com/cdimascio/dotenv-kotlin
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")

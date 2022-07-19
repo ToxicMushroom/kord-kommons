@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.7.10"
     id("maven-publish")
 }
 
 group = "me.melijn.kordkommons"
-version = "0.0.1"
+version = "0.1.0"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -14,11 +14,12 @@ configure<JavaPluginExtension> {
 repositories {
     maven("https://maven.kotlindiscord.com/repository/maven-snapshots/")
     maven("https://maven.kotlindiscord.com/repository/maven-releases/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
     mavenCentral()
 }
 
-val ksp = "1.6.10-1.0.4"
-val kordEx = "1.5.4-SNAPSHOT"
+val ksp = "1.7.10-1.0.6"
+val kordEx = "1.5.5-SNAPSHOT"
 
 dependencies {
     implementation(kotlin("stdlib"))

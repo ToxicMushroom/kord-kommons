@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.20"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
     id("maven-publish")
 }
 
 group = "me.melijn.kordkommons"
-version = "0.0.2"
+version = "0.1.0"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -15,17 +15,17 @@ configure<JavaPluginExtension> {
 
 repositories {
     mavenCentral()
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://maven.kotlindiscord.com/repository/maven-snapshots/")
     maven("https://maven.kotlindiscord.com/repository/maven-releases/")
 }
 
-val kord = "0.8.0-M12"
-val kordEx = "1.5.2-SNAPSHOT"
-val kotlin = "1.6.20"
-val kotlinX = "1.6.1" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+val kordEx = "1.5.5-SNAPSHOT"
+val kotlin = "1.7.10"
+val kotlinX = "1.6.4" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 
 dependencies {
-    implementation("dev.kord:kord-core:$kord")
+//    implementation("dev.kord:kord-core:$kord")
     implementation("com.kotlindiscord.kord.extensions:kord-extensions:$kordEx")
     implementation(project(":kommons"))
 

@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.20"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
     id("maven-publish")
 }
 
 group = "me.melijn.kordkommons"
-version = "1.2.7"
+version = "1.3.0"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -17,8 +17,8 @@ repositories {
     mavenCentral()
 }
 
-val kotlin = "1.6.20"
-val kotlinX = "1.6.1" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+val kotlin = "1.7.10"
+val kotlinX = "1.6.4" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 
 dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
@@ -29,8 +29,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin")
     testImplementation("ch.qos.logback:logback-classic:1.2.11")

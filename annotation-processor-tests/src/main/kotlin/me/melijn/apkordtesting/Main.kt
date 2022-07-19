@@ -26,7 +26,6 @@ suspend fun main() {
     koin.modules(module {
         single { driverManager } bind DriverManager::class
     })
-
     val injectorInterface = ReflectUtil.getInstanceOfKspClass<InjectorInterface>(
         "me.melijn.gen", "InjectionKoinModule"
     )
