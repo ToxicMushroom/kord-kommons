@@ -1,10 +1,7 @@
 package me.melijn.ap.injector
 
 import com.google.devtools.ksp.processing.*
-import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSVisitorVoid
+import com.google.devtools.ksp.symbol.*
 import com.google.devtools.ksp.validate
 import me.melijn.ap.util.appendLine
 
@@ -62,7 +59,8 @@ class InjectorProcessor(
 
     inner class InjectorVisitor(private val singleLines: MutableList<String>, private val injectLines: MutableList<String>) : KSVisitorVoid() {
         override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-            classDeclaration.primaryConstructor!!.accept(this, data)
+            if (classDeclaration.classKind !in listOf(ClassKind.ANNOTATION_CLASS, ClassKind.INTERFACE))
+                classDeclaration.primaryConstructor!!.accept(this, data)
         }
 
         override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {

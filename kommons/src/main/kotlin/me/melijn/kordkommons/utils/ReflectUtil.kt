@@ -41,7 +41,13 @@ object ReflectUtil {
     fun findCompleteGeneratedKspClass(packageName: String, baseClassName: String): Class<*> {
         var i = 0
         val sysCl = ClassLoader.getSystemClassLoader()
-        while (sysCl.loadClass("$packageName.$baseClassName${i + 1}") != null) { i++ }
+        try {
+            while (sysCl.loadClass("$packageName.$baseClassName${i + 1}") != null) {
+                i++
+            }
+        } catch (t: ClassNotFoundException) {
+            // ignore
+        }
         return sysCl.loadClass("$packageName.$baseClassName${i}")
     }
 
