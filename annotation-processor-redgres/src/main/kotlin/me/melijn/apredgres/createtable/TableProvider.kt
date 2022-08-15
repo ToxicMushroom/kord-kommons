@@ -1,18 +1,16 @@
-package me.melijn.ap.cacheable
+package me.melijn.apredgres.createtable
 
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
-import me.melijn.ap.util.OPTION_PREFIX
+import me.melijn.apredgres.util.OPTION_PREFIX
 
-class CacheableProvider : SymbolProcessorProvider {
+class TableProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-
-        return CacheableProcessor(
+        return TableProcessor(
             environment.codeGenerator,
             environment.logger,
-            environment.options["${OPTION_PREFIX}_package"]!!,
-            environment.options["${OPTION_PREFIX}_redis_key_prefix"]!!
+            environment.options["${OPTION_PREFIX}_package"]!!
         )
     }
 }

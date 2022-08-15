@@ -1,4 +1,4 @@
-package me.melijn.ap.createtable
+package me.melijn.apredgres.createtable
 
 interface CreateTableInterface {
     fun createTables()

@@ -16,12 +16,10 @@ repositories {
 }
 
 val ksp = "1.7.10-1.0.6"
-val koin = "3.1.5"
 
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.google.devtools.ksp:symbol-processing-api:$ksp")
-    implementation("io.insert-koin:koin-core:$koin")
     implementation(project(":kommons"))
 }
 
@@ -54,7 +52,7 @@ publishing {
     publications {
         register("mavenJava", MavenPublication::class) {
             from(components["java"])
-            this.artifactId = "ap"
+            this.artifactId = "ap-redgres"
             artifact(sourcesJar.get())
         }
     }

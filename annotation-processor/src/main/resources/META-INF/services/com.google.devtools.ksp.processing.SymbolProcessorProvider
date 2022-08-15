@@ -1,4 +1,2 @@
 me.melijn.ap.injector.InjectorProvider
-me.melijn.ap.createtable.TableProvider
-me.melijn.ap.cacheable.CacheableProvider
 me.melijn.ap.settings.SettingsProvider

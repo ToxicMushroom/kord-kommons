@@ -1,11 +1,11 @@
-package me.melijn.ap.createtable
+package me.melijn.apredgres.createtable
 
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
-import me.melijn.ap.util.appendLine
+import me.melijn.apredgres.util.appendLine
 
 class TableProcessor(
     private val codeGenerator: CodeGenerator,
