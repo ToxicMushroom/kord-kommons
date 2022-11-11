@@ -15,9 +15,11 @@ open class DBTableManager<T : Table>(
         func(this)
     }
 
-    fun newOrUpdate(insert: T.(InsertStatement<Number>) -> Unit, update: T.(UpdateBuilder<Int>) -> Unit) {
-        return scopedTransaction {
-            (table as T).insertOrUpdate(insert, update)
-        }
+    fun <K> newOrUpdate(
+        insert: T.(InsertStatement<Number>) -> Unit, update: T.(UpdateBuilder<Int>) -> Unit,
+        results: (InsertOrUpdate<Number>.() -> K)? = null
+    ) = scopedTransaction {
+        (table as T).insertOrUpdate(insert, update, results)
     }
+
 }

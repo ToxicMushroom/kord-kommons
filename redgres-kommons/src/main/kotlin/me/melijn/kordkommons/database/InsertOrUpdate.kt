@@ -32,15 +32,23 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
  * INSERT INTO whatever(identifier, value) VALUES('some identifier', 'inserted')
  * ON DUPLICATE KEY UPDATE value = 'updated'
  */
-fun <T : Table> T.insertOrUpdate(insert: T.(InsertStatement<Number>) -> Unit, update: T.(UpdateBuilder<Int>) -> Unit) {
-    val updateStatement = UpsertUpdateBuilder(this).apply { update(this) }
-    InsertOrUpdate<Number>(updateStatement, this).apply {
+fun <T : Table, K> T.insertOrUpdate(
+    insert: T.(InsertStatement<Number>) -> Unit,
+    update: T.(UpdateBuilder<Int>) -> Unit,
+    results: (InsertOrUpdate<Number>.() -> K)? = null
+): K? {
+    val updateQuery = UpsertUpdateBuilder(this).apply {
+        update(this)
+    }
+    return InsertOrUpdate<Number>(updateQuery, this).run {
         insert(this)
+        val res = results?.let { it() }
         execute(TransactionManager.current())
+        res
     }
 }
 
-private class UpsertUpdateBuilder(table: Table) : UpdateBuilder<Int>(StatementType.OTHER, listOf(table)) {
+class UpsertUpdateBuilder(table: Table) : UpdateBuilder<Int>(StatementType.OTHER, listOf(table)) {
 
     val firstDataSet: List<Pair<Column<*>, Any?>> get() = values.toList()
 
@@ -60,10 +68,8 @@ private class UpsertUpdateBuilder(table: Table) : UpdateBuilder<Int>(StatementTy
     }
 }
 
-private class InsertOrUpdate<Key : Any>(
-    val update: UpsertUpdateBuilder,
-    table: Table,
-    isIgnore: Boolean = false
+class InsertOrUpdate<Key : Any>(
+    val update: UpsertUpdateBuilder, table: Table, isIgnore: Boolean = false
 ) : InsertStatement<Key>(table, isIgnore) {
 
     override fun arguments(): List<List<Pair<IColumnType, Any?>>> {
@@ -75,8 +81,7 @@ private class InsertOrUpdate<Key : Any>(
 
     override fun prepareSQL(transaction: Transaction): String {
         val values = update.firstDataSet
-        if (values.isEmpty())
-            return super.prepareSQL(transaction)
+        if (values.isEmpty()) return super.prepareSQL(transaction)
 
 
         val originalStatement = super.prepareSQL(transaction)
@@ -89,6 +94,6 @@ private class InsertOrUpdate<Key : Any>(
             toString()
         }
 
-        return "$originalStatement ON CONFLICT(${table.primaryKey?.columns?.joinToString() { it.name } ?: (table as IdTable<*>).id.name}) DO UPDATE SET $updateStm"
+        return "$originalStatement ON CONFLICT(${table.primaryKey?.columns?.joinToString { it.name } ?: (table as IdTable<*>).id.name}) DO UPDATE SET $updateStm"
     }
 }
