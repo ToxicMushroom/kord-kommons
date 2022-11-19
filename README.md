@@ -1,13 +1,14 @@
 ### **this project is still in WIP, changes may be breaking**
 
-All artifacts can be found on https://nexus.melijn.com/#browse/browse:maven-releases:me%2Fmelijn%2Fkordkommons
+All artifacts can be found on https://reposilite.melijn.com/
 
 ## Module info
-- _redgres-kommons_ is a redis-postgres utility library, it depends on Exposed, hikariCP, postgresql and lettuce
 - _kommons_ is for discord bot and java utilities
 - _kord-kommons_ is for kord and kord-ex utilities
+- _redgres-kommons_ is a redis-postgres utility library, it depends on Exposed, hikariCP, postgresql and lettuce
 - _ap_ is an annotation processor using KSP
 - _ap-kordex_ is an annotation processor using KSP and depends on kordex
+- _ap-redgres_ is an annotation processor for database DAO generation
  
 
 **Examples:** 
@@ -20,12 +21,15 @@ All artifacts can be found on https://nexus.melijn.com/#browse/browse:maven-rele
 ## Gradle
 ```kt
 repositories {
-    maven("https://nexus.melijn.com/repository/maven-releases/")
+    // Snapshots
+    maven("https://reposilite.melijn.com/snapshots/")
+    // Releases repo
+    maven("https://reposilite.melijn.com/releases/")
 }
 
 // modules can be added individually
 dependencies {
-    implementation("me.melijn.kordkommons:kommons:LATEST") // see nexus above for version
+    implementation("me.melijn.kordkommons:kommons:LATEST") // see repo above for version
     implementation("me.melijn.kordkommons:kord-kommons:LATEST")
     implementation("me.melijn.kordkommons:redgres-kommons:LATEST")
 }
@@ -33,23 +37,30 @@ dependencies {
 **Gradle annotation processing**
 ```kt
 plugins {
-    id("com.google.devtools.ksp") version "1.7.10-1.0.6"
+    id("com.google.devtools.ksp") version "1.7.20-1.0.6"
 }
 
 dependencies {
     val apKord = "me.melijn.kordkommons:ap:LATEST"
     val apKordex = "me.melijn.kordkommons:apkordex:LATEST"
+    val apRedgres = "me.melijn.kordkommons:apredgres:LATEST"
     implementation(apKord)
-    implementation(apKordex)
+    implementation(apKord)
+    implementation(apRedgres)
     ksp(apKord)
     ksp(apKordex)
+    ksp(apRedgres)
 }
 
 ksp {
     // these are arguments for ksp and configurable but required
-    arg("apkordex_package", "me.melijn.gen")
+    arg("ap_kordex_package", "me.melijn.gen")
+    arg("ap_redgres_package", "me.melijn.gen")
+    arg("ap_redgres_redis_key_prefix", "melijn:")
     arg("ap_package", "me.melijn.gen")
-    arg("ap_redis_key_prefix", "melijn:")
+    arg("ap_imports", "import org.koin.core.context.GlobalContext; import org.koin.core.parameter.ParametersHolder;")
+    arg("ap_interfaces", "")
+    arg("ap_init_placeholder", "GlobalContext.get().get<%className%> { ParametersHolder() }")
 }
 ```
 
