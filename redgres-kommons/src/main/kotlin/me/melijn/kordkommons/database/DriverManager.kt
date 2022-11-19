@@ -26,7 +26,7 @@ import javax.sql.DataSource
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class DriverManager(
+public class DriverManager(
     hikariConfig: HikariConfig,
     redisConfig: RedisConfig,
     private val runAfterConnect: (Transaction.() -> Unit)? = null
@@ -36,12 +36,12 @@ class DriverManager(
 
     private val logger = LoggerFactory.getLogger(DriverManager::class.java.name)
     private val postgresqlPattern = "(\\d+\\.\\d+).*".toRegex()
-    val database: Database
+    public val database: Database
     private val dataSource: DataSource
 
-    var redisClient: RedisClient? = null
-    var redisConnection: StatefulRedisConnection<String, String?>? = null
-    var compressionRedisConnection: StatefulRedisConnection<String, String?>? = null
+    public var redisClient: RedisClient? = null
+    public var redisConnection: StatefulRedisConnection<String, String?>? = null
+    public var compressionRedisConnection: StatefulRedisConnection<String, String?>? = null
 
     init {
         // HIKARI
@@ -109,7 +109,7 @@ class DriverManager(
         }
     }
 
-    fun getUsableConnection(function: (Connection) -> Unit) {
+    public fun getUsableConnection(function: (Connection) -> Unit) {
         val startConnection = System.currentTimeMillis()
         dataSource.connection.use {
             function(it)
@@ -118,7 +118,7 @@ class DriverManager(
             logger.info("Connection collected: Alive for ${(System.currentTimeMillis() - startConnection)}ms")
     }
 
-    fun registerTable(table: String, tableStructure: String, primaryKey: String, uniqueKey: String = "") {
+    public fun registerTable(table: String, tableStructure: String, primaryKey: String, uniqueKey: String = "") {
         val hasPrimary = primaryKey != ""
         val hasUnique = uniqueKey != ""
         afterConnectToBeExecutedQueries.add(
@@ -132,7 +132,7 @@ class DriverManager(
         )
     }
 
-    fun executeTableRegistration() {
+    public fun executeTableRegistration() {
         getUsableConnection { connection ->
             connection.createStatement().use { statement ->
                 afterConnectToBeExecutedQueries.forEach { tableRegistrationQuery ->
@@ -152,7 +152,7 @@ class DriverManager(
      *   objects: true, 6
      *   return value: 1
      * **/
-    suspend fun executeUpdateGetChanged(query: String, vararg objects: Any?): Int = suspendCoroutine {
+    public suspend fun executeUpdateGetChanged(query: String, vararg objects: Any?): Int = suspendCoroutine {
         try {
             getUsableConnection { connection ->
                 connection.prepareStatement(query).use { preparedStatement ->
@@ -178,7 +178,7 @@ class DriverManager(
      *   objects: true, 6
      *   return value: 1
      * **/
-    fun executeUpdate(query: String, vararg objects: Any?) {
+    public fun executeUpdate(query: String, vararg objects: Any?) {
         try {
             getUsableConnection { connection ->
                 connection.prepareStatement(query).use { preparedStatement ->
@@ -203,7 +203,7 @@ class DriverManager(
      *   objects: 5
      *   resultset: Consumer object to handle the resultset
      * **/
-    fun executeQuery(query: String, resultset: (ResultSet) -> Unit, vararg objects: Any?) {
+    public fun executeQuery(query: String, resultset: (ResultSet) -> Unit, vararg objects: Any?) {
         executeQueryList(query, resultset, objects.toList())
     }
 
@@ -216,7 +216,7 @@ class DriverManager(
      *   objects: 5
      *   resultset: Consumer object to handle the resultset
      * **/
-    fun executeQueryList(query: String, resultset: (ResultSet) -> Unit, objects: List<Any?>) {
+    public fun executeQueryList(query: String, resultset: (ResultSet) -> Unit, objects: List<Any?>) {
         try {
             getUsableConnection { connection ->
                 if (connection.isClosed) {
@@ -237,7 +237,7 @@ class DriverManager(
         }
     }
 
-    suspend fun getDBVersion(): String = suspendCoroutine {
+    public suspend fun getDBVersion(): String = suspendCoroutine {
         try {
             getUsableConnection { con ->
                 it.resume(
@@ -250,7 +250,7 @@ class DriverManager(
         }
     }
 
-    suspend fun getConnectorVersion(): String = suspendCoroutine {
+    public suspend fun getConnectorVersion(): String = suspendCoroutine {
         try {
             getUsableConnection { con ->
                 it.resume(
@@ -264,7 +264,7 @@ class DriverManager(
         }
     }
 
-    fun clear(table: String): Int {
+    public fun clear(table: String): Int {
         dataSource.connection.use { connection ->
             connection.prepareStatement("TRUNCATE $table").use { preparedStatement ->
                 return preparedStatement.executeUpdate()
@@ -280,7 +280,7 @@ class DriverManager(
      *   objects: true, 6
      *   return value: 1
      * **/
-    suspend fun executeUpdateGetGeneratedKeys(query: String, vararg objects: Any?): Long = suspendCoroutine {
+    public suspend fun executeUpdateGetGeneratedKeys(query: String, vararg objects: Any?): Long = suspendCoroutine {
         try {
             getUsableConnection { connection ->
                 connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS).use { preparedStatement ->
@@ -307,11 +307,11 @@ class DriverManager(
         }
     }
 
-    fun dropTable(table: String) {
+    public fun dropTable(table: String) {
         afterConnectToBeExecutedQueries.add(0, "DROP TABLE $table")
     }
 
-    fun getOpenRedisConnection(compress: Boolean = false): RedisAsyncCommands<String, String?>? {
+    public fun getOpenRedisConnection(compress: Boolean = false): RedisAsyncCommands<String, String?>? {
         if (compress){
             if (compressionRedisConnection?.async()?.isOpen == true) {
                 return compressionRedisConnection?.async()
@@ -325,7 +325,7 @@ class DriverManager(
     }
 
     // ttl: minutes
-    fun setCacheEntry(key: String, value: String, ttl: Int? = null, ttlUnit: TimeUnit = TimeUnit.MINUTES, compress: Boolean = false) {
+    public fun setCacheEntry(key: String, value: String, ttl: Int? = null, ttlUnit: TimeUnit = TimeUnit.MINUTES, compress: Boolean = false) {
         val async = getOpenRedisConnection(compress) ?: return
         if (ttl == null) async.set(key, value)
         else {
@@ -334,14 +334,14 @@ class DriverManager(
         }
     }
 
-    fun setCacheEntryWithArgs(key: String, value: String, args: SetArgs? = null, compress: Boolean = false) {
+    public fun setCacheEntryWithArgs(key: String, value: String, args: SetArgs? = null, compress: Boolean = false) {
         val async = getOpenRedisConnection(compress) ?: return
         if (args == null) async.set(key, value)
         else async.set(key, value, args)
     }
 
     // ttl: minutes
-    suspend fun getCacheEntry(key: String, ttlMinutes: Int? = null, compress: Boolean = false): String? {
+    public suspend fun getCacheEntry(key: String, ttlMinutes: Int? = null, compress: Boolean = false): String? {
         val commands = getOpenRedisConnection(compress) ?: return null
         val result = commands
             .get(key)
@@ -352,7 +352,7 @@ class DriverManager(
         return result
     }
 
-    fun removeCacheEntry(key: String) {
+    public fun removeCacheEntry(key: String) {
         val con = getOpenRedisConnection() ?: return
         con.del(key)
     }

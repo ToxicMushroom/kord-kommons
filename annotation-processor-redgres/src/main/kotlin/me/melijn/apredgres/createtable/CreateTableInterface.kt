@@ -1,5 +1,5 @@
 package me.melijn.apredgres.createtable
 
-interface CreateTableInterface {
-    fun createTables()
+public interface CreateTableInterface {
+    public fun createTables()
 }

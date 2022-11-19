@@ -5,9 +5,8 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import me.melijn.apredgres.util.OPTION_PREFIX
 
-class CacheableProvider : SymbolProcessorProvider {
+internal class CacheableProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-
         return CacheableProcessor(
             environment.codeGenerator,
             environment.logger,

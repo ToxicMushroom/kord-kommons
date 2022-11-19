@@ -3,7 +3,7 @@ package me.melijn.kordkommons.async
 import kotlinx.coroutines.*
 import java.util.concurrent.*
 
-object TaskManager {
+public object TaskManager {
 
     private val threadFactory = { name: String ->
         var counter = 0
@@ -12,13 +12,13 @@ object TaskManager {
         }
     }
 
-    val executorService: ExecutorService = ForkJoinPool()
+    private val executorService: ExecutorService = ForkJoinPool()
     private val dispatcher = executorService.asCoroutineDispatcher()
-    val scheduledExecutorService: ScheduledExecutorService =
+    public var scheduledExecutorService: ScheduledExecutorService =
         Executors.newScheduledThreadPool(15, threadFactory.invoke("Repeater"))
-    val coroutineScope = CoroutineScope(dispatcher)
+    public var coroutineScope: CoroutineScope = CoroutineScope(dispatcher)
 
-    fun async(block: suspend CoroutineScope.() -> Unit): Job {
+    public fun async(block: suspend CoroutineScope.() -> Unit): Job {
         return coroutineScope.launch {
             Task {
                 block.invoke(this)
@@ -26,37 +26,37 @@ object TaskManager {
         }
     }
 
-    fun asyncIgnoreEx(block: suspend CoroutineScope.() -> Unit) = coroutineScope.launch {
+    public fun asyncIgnoreEx(block: suspend CoroutineScope.() -> Unit): Job = coroutineScope.launch {
         try {
             block.invoke(this)
-        } catch (t: Throwable) {
+        } catch (ignored: Throwable) {
             // ignored by design
         }
     }
 
-    fun <T> taskValueAsync(block: suspend CoroutineScope.() -> T): Deferred<T> = coroutineScope.async {
+    public fun <T> taskValueAsync(block: suspend CoroutineScope.() -> T): Deferred<T> = coroutineScope.async {
         DeferredTask { block.invoke(this) }.run()
     }
 
-    fun <T> taskValueNAsync(block: suspend CoroutineScope.() -> T?): Deferred<T?> = coroutineScope.async {
+    public fun <T> taskValueNAsync(block: suspend CoroutineScope.() -> T?): Deferred<T?> = coroutineScope.async {
         DeferredNTask {
             block.invoke(this)
         }.run()
     }
 
-    fun <T> evalTaskValueNAsync(block: suspend CoroutineScope.() -> T?): Deferred<T?> = coroutineScope.async {
+    public fun <T> evalTaskValueNAsync(block: suspend CoroutineScope.() -> T?): Deferred<T?> = coroutineScope.async {
         EvalDeferredNTask {
             block.invoke(this)
         }.run()
     }
 
-    inline fun asyncInline(crossinline block: CoroutineScope.() -> Unit) = coroutineScope.launch {
+    public inline fun asyncInline(crossinline block: CoroutineScope.() -> Unit): Job = coroutineScope.launch {
         TaskInline {
             block.invoke(this)
         }.run()
     }
 
-    inline fun asyncAfter(afterMillis: Long, crossinline func: suspend () -> Unit): ScheduledFuture<*> {
+    public inline fun asyncAfter(afterMillis: Long, crossinline func: suspend () -> Unit): ScheduledFuture<*> {
         return scheduledExecutorService.schedule(RunnableTask { func() }, afterMillis, TimeUnit.MILLISECONDS)
     }
 }

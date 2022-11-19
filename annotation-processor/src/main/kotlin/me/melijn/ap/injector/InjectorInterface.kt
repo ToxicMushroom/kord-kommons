@@ -2,10 +2,10 @@ package me.melijn.ap.injector
 
 import org.koin.core.module.Module
 
-abstract class InjectorInterface {
+public abstract class InjectorInterface {
 
-    abstract val module: Module
+    public abstract val module: Module
 
-    abstract fun initInjects()
+    public abstract fun initInjects()
 
 }

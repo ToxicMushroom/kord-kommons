@@ -1,3 +1,3 @@
 package me.melijn.apredgres.util
 
-const val OPTION_PREFIX = "ap_redgres"
+public const val OPTION_PREFIX: String = "ap_redgres"

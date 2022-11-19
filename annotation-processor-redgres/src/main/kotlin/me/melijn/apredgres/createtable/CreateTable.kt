@@ -1,3 +1,3 @@
 package me.melijn.apredgres.createtable
 
-annotation class CreateTable()
+public annotation class CreateTable

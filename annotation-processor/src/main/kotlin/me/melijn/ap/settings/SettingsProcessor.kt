@@ -10,7 +10,7 @@ import me.melijn.ap.util.appendText
 import me.melijn.kordkommons.environment.BotSettings
 import java.util.*
 
-class SettingsProcessor(
+internal class SettingsProcessor(
     codeGenerator: CodeGenerator,
     val logger: KSPLogger,
     val location: String

@@ -1,3 +1,3 @@
 package me.melijn.ap.util
 
-const val OPTION_PREFIX = "ap"
+public const val OPTION_PREFIX: String = "ap"

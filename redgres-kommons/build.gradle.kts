@@ -1,86 +1,35 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
-    id("maven-publish")
+    `kordex-module`
+    `published-module`
+    `dokka-module`
+    `tested-module`
 }
-
-group = "me.melijn.kordkommons"
-version = "0.1.1"
-
-configure<JavaPluginExtension> {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
-
-repositories {
-    mavenCentral()
-}
-
-val kotlin = "1.7.10"
-val kotlinX = "1.6.4" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 
 dependencies {
-    implementation(project(":kommons"))
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.springbs)
 
-    // Database Postgres
-    // https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
-    implementation("org.jetbrains.exposed:exposed-core:0.40.1")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.40.1")
+    implementation(libs.hikari)
+    implementation(libs.postgresql)
+    implementation(libs.lettuce)
 
-    // https://search.maven.org/artifact/com.zaxxer/HikariCP
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation(libs.kx.coroutines.core)
+    implementation(libs.kx.coroutines.jdk)
 
-    // https://mvnrepository.com/artifact/org.postgresql/postgresql
-    implementation("org.postgresql:postgresql:42.5.0")
+    api(project(":kommons"))
 
-    // Redis
-    // https://mvnrepository.com/artifact/io.lettuce/lettuce-core
-    implementation("io.lettuce:lettuce-core:6.2.1.RELEASE")
-
-    // Coroutine utils
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin")
-    testImplementation("ch.qos.logback:logback-classic:1.2.11")
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.logback)
 }
 
-tasks.test {
-    useJUnitPlatform()
+val compileKotlin: KotlinCompile by tasks
+
+compileKotlin.kotlinOptions {
+    languageVersion = "1.6"
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-tasks {
-    withType(JavaCompile::class) {
-        options.encoding = "UTF-8"
-    }
-    withType(KotlinCompile::class) {
-        kotlinOptions {
-            jvmTarget = "11"
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            url = uri("https://nexus.melijn.com/repository/maven-releases/")
-            credentials {
-                username = property("melijnPublisher").toString()
-                password = property("melijnPassword").toString()
-            }
-        }
-    }
-    publications {
-        register("mavenJava", MavenPublication::class) {
-            from(components["java"])
-            artifactId = "redgres-kommons"
-            artifact(sourcesJar.get())
-        }
-    }
+dokkaModule {
+    includes.add("packages.md")
 }

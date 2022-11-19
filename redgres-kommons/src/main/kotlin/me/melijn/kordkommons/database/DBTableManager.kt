@@ -6,20 +6,25 @@ import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
 
-open class DBTableManager<T : Table>(
-    open val driverManager: DriverManager,
-    val table: Table
+public open class DBTableManager<T : Table>(
+    public open val driverManager: DriverManager,
+    public val table: Table
 ) {
 
-    inline fun <L> scopedTransaction(crossinline func: (Transaction) -> L): L = transaction(driverManager.database) {
+    public inline fun <L> scopedTransaction(crossinline func: (Transaction) -> L): L = transaction(driverManager.database) {
         func(this)
     }
 
-    fun <K> newOrUpdate(
+    public fun <K> newOrUpdate(
         insert: T.(InsertStatement<Number>) -> Unit, update: T.(UpdateBuilder<Int>) -> Unit,
-        results: (InsertOrUpdate<Number>.() -> K)? = null
-    ) = scopedTransaction {
+        results: InsertOrUpdate<Number>.() -> K
+    ): K = scopedTransaction {
         (table as T).insertOrUpdate(insert, update, results)
     }
 
+    public fun <K> newOrUpdate(
+        insert: T.(InsertStatement<Number>) -> Unit, update: T.(UpdateBuilder<Int>) -> Unit
+    ): Int? = scopedTransaction {
+        (table as T).insertOrUpdate(insert, update)
+    }
 }

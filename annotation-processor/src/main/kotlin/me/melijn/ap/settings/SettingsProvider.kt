@@ -5,7 +5,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import me.melijn.ap.util.OPTION_PREFIX
 
-class SettingsProvider : SymbolProcessorProvider {
+internal class SettingsProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return SettingsProcessor(
             environment.codeGenerator,

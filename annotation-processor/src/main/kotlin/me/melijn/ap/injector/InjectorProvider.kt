@@ -5,7 +5,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import me.melijn.ap.util.OPTION_PREFIX
 
-class InjectorProvider : SymbolProcessorProvider {
+internal class InjectorProvider : SymbolProcessorProvider {
     private val defaultInitPlaceholder = """
         val %varName% by inject<%className%>(%className%::class.java)
         %varName%.toString()

@@ -2,9 +2,19 @@ package me.melijn.kordkommons.database
 
 import com.zaxxer.hikari.HikariConfig
 
-object ConfigUtil {
+public object ConfigUtil {
 
-    fun generateDefaultHikariConfig(
+    /**
+     * An HikariConfig with jdbc connection to your [host] via the postgresql connector.
+     * And with following configuration values:
+     * @post | return.maxLifetime == 30_000 (30s)
+     * @post | return.validationTimeout == 3_000 (3s)
+     * @post | return.connectionTimeout == 30_000 (30s)
+     * @post | return.leakDetectionThreshold == 2000 (2s)
+     * @post | return.maximumPoolSize == 10
+     *
+     */
+    public fun generateDefaultHikariConfig(
         host: String, port: Int, db: String, user: String, password: String
     ): HikariConfig {
         val config = HikariConfig()

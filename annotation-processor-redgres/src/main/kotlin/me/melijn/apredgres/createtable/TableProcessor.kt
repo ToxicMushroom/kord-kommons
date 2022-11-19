@@ -7,7 +7,7 @@ import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
 import me.melijn.apredgres.util.appendLine
 
-class TableProcessor(
+internal class TableProcessor(
     private val codeGenerator: CodeGenerator,
     private val logger: KSPLogger,
     private val location: String,

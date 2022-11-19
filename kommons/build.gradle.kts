@@ -1,75 +1,48 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
-    id("maven-publish")
+    `kordex-module`
+    `published-module`
+    `dokka-module`
+    `tested-module`
 }
-
-group = "me.melijn.kordkommons"
-version = "1.3.0"
-
-configure<JavaPluginExtension> {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
-
-repositories {
-    mavenCentral()
-}
-
-val kotlin = "1.7.10"
-val kotlinX = "1.6.4" // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
 
 dependencies {
-    implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
-    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation(libs.logging)
+    implementation(libs.kotlin.stdlib)
 
-    // Coroutine utils
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
+    implementation(libs.dotenv)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
+    implementation(libs.kx.datetime)
+    implementation(libs.kx.coroutines.core)
+    implementation(libs.kx.coroutines.jdk)
+    implementation(libs.kx.ser)
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin")
-    testImplementation("ch.qos.logback:logback-classic:1.2.11")
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.logback)
 }
 
-tasks.test {
-    useJUnitPlatform()
+val compileKotlin: KotlinCompile by tasks
+
+compileKotlin.kotlinOptions {
+    languageVersion = "1.6"
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
+dokkaModule {
+    includes.add("packages.md")
 }
-
-tasks {
-    withType(JavaCompile::class) {
-        options.encoding = "UTF-8"
-    }
-    withType(KotlinCompile::class) {
-        kotlinOptions {
-            jvmTarget = "11"
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            url = uri("https://nexus.melijn.com/repository/maven-releases/")
-            credentials {
-                username = property("melijnPublisher").toString()
-                password = property("melijnPassword").toString()
-            }
-        }
-    }
-    publications {
-        register("mavenJava", MavenPublication::class) {
-            from(components["java"])
-            artifact(sourcesJar.get())
-        }
-    }
-}
+//dependencies {
+//    implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
+//    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
+//    implementation("org.slf4j:slf4j-api:1.7.36")
+//
+//    // Coroutine utils
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
+//
+//    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+//    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
+//
+//    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin")
+//    testImplementation("ch.qos.logback:logback-classic:1.2.11")
+//}

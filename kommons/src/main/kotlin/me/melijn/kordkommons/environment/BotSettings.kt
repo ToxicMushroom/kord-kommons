@@ -1,5 +1,6 @@
 package me.melijn.kordkommons.environment
 
+import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.dotenv
 import me.melijn.kordkommons.utils.camelToSnake
 import kotlin.properties.ReadOnlyProperty
@@ -15,88 +16,108 @@ import kotlin.properties.ReadOnlyProperty
  *
  * If you need more delegate types, write extension functions or consider a PR
  */
-open class BotSettings(val group: String) {
+public open class BotSettings(public val group: String) {
     private val transformedGroup = group.replace(".", "_").uppercase()
-    var splitOnCammelCase = globalSplitOnCammelCase
+    public var splitOnCamelCase: Boolean = globalSplitOnCamelCase
 
-    companion object {
-        var dotEnv = dotenv {
+    public companion object {
+        public var dotEnv: Dotenv = dotenv {
             this.filename = System.getenv("ENV_FILE") ?: ".env"
             this.ignoreIfMissing = true
         }
-        var globalSplitOnCammelCase = false
+        public var globalSplitOnCamelCase: Boolean = false
     }
 
-    fun stringList(key: String, default: List<String> = emptyList()) = ReadOnlyProperty<BotSettings, List<String>> { _, _ ->
-        var i = 0
-        val list = mutableListOf<String>()
-        var value = getStringValueN(key + i++)?.also { list.add(it) }
-        while (value != null) {
-            value = getStringValueN(key + i++)?.also { list.add(it) }
+    public fun stringList(
+        key: String,
+        default: List<String> = emptyList()
+    ): ReadOnlyProperty<BotSettings, List<String>> =
+        ReadOnlyProperty { _, _ ->
+            var i = 0
+            val list = mutableListOf<String>()
+            var value = getStringValueN(key + i++)?.also { list.add(it) }
+            while (value != null) {
+                value = getStringValueN(key + i++)?.also { list.add(it) }
+            }
+            list.takeIf { it.isNotEmpty() } ?: default
         }
-        list.takeIf { it.isNotEmpty() } ?: default
-    }
 
-    fun string(key: String, default: String? = null) = ReadOnlyProperty<BotSettings, String> { _, _ ->
-        getValue(key, default) { t -> t }
-    }
+    public fun string(key: String, default: String? = null): ReadOnlyProperty<BotSettings, String> =
+        primitive(key, default) { it }
 
-    fun stringN(key: String) = ReadOnlyProperty<BotSettings, String?> { _, _ ->
-        getStringValueN(key)
-    }
+    public fun stringN(key: String, default: String? = null): ReadOnlyProperty<BotSettings, String?> =
+        primitiveN(key, default) { it }
 
-    fun long(key: String, default: Long? = null) = ReadOnlyProperty<BotSettings, Long> { _, _ ->
-        getValue(key, default) { t -> t.toLong() }
-    }
+    public fun long(key: String, default: Long? = null): ReadOnlyProperty<BotSettings, Long> =
+        primitive(key, default) { it.toLong() }
 
-    fun int(key: String, default: Int? = null) = ReadOnlyProperty<BotSettings, Int> { _, _ ->
-        getValue(key, default) { t -> t.toInt() }
-    }
+    public fun longN(key: String, default: Long? = null): ReadOnlyProperty<BotSettings, Long?> =
+        primitiveN(key, default) { it.toLong() }
 
-    fun boolean(key: String, default: Boolean? = null) = ReadOnlyProperty<BotSettings, Boolean> { _, _ ->
-        getValue(key, default) { t -> t.toBoolean() }
-    }
+    public fun int(key: String, default: Int? = null): ReadOnlyProperty<BotSettings, Int> =
+        primitive(key, default) { it.toInt() }
 
-    fun float(key: String, default: Float? = null) = ReadOnlyProperty<BotSettings, Float> { _, _ ->
-        getValue(key, default) { t -> t.toFloat() }
-    }
+    public fun intN(key: String, default: Int? = null): ReadOnlyProperty<BotSettings, Int?> =
+        primitiveN(key, default) { it.toInt() }
 
-    inline fun <reified T : Enum<T>> enum(key: String, default: String? = null) =
-        ReadOnlyProperty<BotSettings, T> { _, _ ->
+    public fun boolean(key: String, default: Boolean? = null): ReadOnlyProperty<BotSettings, Boolean> =
+        primitive(key, default) { it.toBoolean() }
+
+    public fun booleanN(key: String, default: Boolean? = null): ReadOnlyProperty<BotSettings, Boolean?> =
+        primitiveN(key, default) { it.toBoolean() }
+
+    public fun float(key: String, default: Float? = null): ReadOnlyProperty<BotSettings, Float> =
+        primitive(key, default) { it.toFloat() }
+
+    public fun floatN(key: String, default: Float? = null): ReadOnlyProperty<BotSettings, Float?> =
+        primitiveN(key, default) { it.toFloat() }
+
+    public fun double(key: String, default: Double? = null): ReadOnlyProperty<BotSettings, Double> =
+        primitive(key, default) { it.toDouble() }
+
+    public fun doubleN(key: String, default: Double? = null): ReadOnlyProperty<BotSettings, Double?> =
+        primitiveN(key, default) { it.toDouble() }
+
+    private fun <T> primitive(key: String, default: T?, converter: (String) -> T) =
+        ReadOnlyProperty<BotSettings, T> { _, _ -> getValue(key, default, converter) }
+
+    private fun <T> primitiveN(key: String, default: T?, converter: (String) -> T) =
+        ReadOnlyProperty<BotSettings, T?> { _, _ -> getValueN(key, default, converter) }
+
+    public inline fun <reified T : Enum<T>> enum(
+        key: String,
+        default: String? = null
+    ): ReadOnlyProperty<BotSettings, T> =
+        ReadOnlyProperty { _, _ ->
             val value = getValue(key, default) { t -> t }
             val enumValues = enumValues<T>()
             enumValues.firstOrNull { value.equals(it.toString(), true) }
                 ?: throw IllegalArgumentException(
                     "the env entry: ${group}_${key}=${value} has an incorrect value," +
-                        " the value should be one of the following: " +
-                        enumValues.joinToString()
+                            " the value should be one of the following: " +
+                            enumValues.joinToString()
                 )
         }
 
-    inline fun <reified T : Enum<T>> enumN(key: String) = ReadOnlyProperty<BotSettings, T?> { _, _ ->
-        val value = getStringValueN(key)
-        enumValues<T>().firstOrNull { value.equals(it.toString(), true) }
-    }
-
-    fun <T> getValue(key: String, default: T?, convertor: (String) -> T): T {
-        val value = getStringValueN(key, default)
-        return if (value != null) convertor(value)
-        else default ?: throw IllegalStateException()
-    }
-
-    fun getStringValue(key: String) = getStringValueN(key, null) ?: throw IllegalStateException()
-    fun getStringValueN(key: String, default: Any?): String? {
-        val value = getStringValueN(key)
-        if (value == null && default == null) throw IllegalStateException("missing env value for key: ${group}_${key}")
-        return value
-    }
-
-    fun getStringValueN(key: String): String? {
-        val finalKey = if (splitOnCammelCase) {
-            key.camelToSnake()
-        } else {
-            key
+    public inline fun <reified T : Enum<T>> enumN(key: String): ReadOnlyProperty<BotSettings, T?> =
+        ReadOnlyProperty { _, _ ->
+            val value = getStringValueN(key)
+            enumValues<T>().firstOrNull { value.equals(it.toString(), true) }
         }
-        return dotEnv[transformedGroup + "_" + finalKey.uppercase()]
+
+    /** Throws if (the default value is null and the value is missing) **/
+    public fun <T> getValue(key: String, default: T?, convertor: (String) -> T): T =
+        getValueN(key, default, convertor) ?: throw IllegalStateException("missing env value for key: ${group}_${key}")
+
+    public fun <T> getValueN(key: String, default: T?, convertor: (String) -> T): T? {
+        val value = getStringValueN(key)
+        return if (value != null) convertor(value)
+        else default
+    }
+
+    public fun getStringValueN(key: String): String? {
+        val keyInChosenFormat = if (splitOnCamelCase) key.camelToSnake() else key
+
+        return dotEnv[transformedGroup + "_" + keyInChosenFormat.uppercase()]
     }
 }

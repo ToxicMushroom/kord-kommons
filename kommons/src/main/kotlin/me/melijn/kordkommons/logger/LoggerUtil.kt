@@ -5,11 +5,11 @@ import mu.KotlinLogging
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KProperty
 
-inline fun <reified R : Any> R.logger(): KLogger =
+public inline fun <reified R : Any> R.logger(): KLogger =
     KotlinLogging.logger(LoggerFactory.getLogger(this::class.java.name.substringBefore("\$Companion")))
 
-object Log {
-    operator fun getValue(thisRef: Any?, prop: KProperty<*>): KLogger {
+public object Log {
+    public operator fun getValue(thisRef: Any?, prop: KProperty<*>): KLogger {
         return if (thisRef != null) {
             val underlyingLogger = LoggerFactory.getLogger(thisRef::class.java)
             KotlinLogging.logger(underlyingLogger)

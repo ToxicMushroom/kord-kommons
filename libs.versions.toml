@@ -1,0 +1,85 @@
+[versions]
+detekt = "1.21.0-RC2"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
+dokka = "1.7.0"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
+kotlin = "1.7.20"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
+
+commons-validator = "1.7"
+groovy = "3.0.9"
+h2 = "2.1.214"
+icu4j = "71.1"
+jansi = "2.4.0"
+jsoup = "1.15.2"
+junit = "5.8.2"
+koin = "3.2.0"
+konf = "1.1.2"
+#kord = "0.8.x-SNAPSHOT"
+kord = "0.8.0-M17"
+kordex = "1.5.5-SNAPSHOT"
+kotlinpoet = "1.12.0"
+ksp = "1.7.20-1.0.6"
+ktor = "2.0.3"
+kx-ser = "1.3.3"
+kx-datetime = "0.3.3"
+kx-coroutines-core = "1.6.4"
+kx-coroutines-jdk = "1.6.4"
+linkie = "1.0.99"
+logback = "1.2.5"
+logging = "2.1.23"
+pf4j = "3.7.0"
+sentry = "6.1.4"
+time4j-base = "5.9.1"
+time4j-tzdata = "5.0-2022a"
+toml = "0.1.6"
+dotenv = "6.2.2"
+
+exposed = "0.41.1" # https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
+hikari = "5.0.1" # https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+postgres = "42.5.0" # https://mvnrepository.com/artifact/org.postgresql/postgresql
+lettuce = "6.2.1.RELEASE" # https://mvnrepository.com/artifact/io.lettuce/lettuce-core
+
+[libraries]
+commons-validator = { module = "commons-validator:commons-validator", version.ref = "commons-validator" }
+groovy = { module = "org.codehaus.groovy:groovy", version.ref = "groovy" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
+jansi = { module = "org.fusesource.jansi:jansi", version.ref = "jansi" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-logger = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+
+kord = { module = "dev.kord:kord-core", version.ref = "kord" }
+kordex = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kordex" }
+#kord-voice = { module = "dev.kord:core-voice", version.ref = "kord" }
+
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
+ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+kx-ser = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kx-ser" }
+kx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kx-datetime" }
+kx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kx-coroutines-core" }
+kx-coroutines-jdk = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kx-coroutines-jdk" }
+
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
+exposed-springbs = { module = "org.jetbrains.exposed:exposed-spring-boot-starter", version.ref = "exposed" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+lettuce = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }
+
+dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenv" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+logging = { module = "io.github.microutils:kotlin-logging", version.ref = "logging" }
+pf4j = { module = "org.pf4j:pf4j", version.ref = "pf4j" }
+sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
+time4j-base = { module = "net.time4j:time4j-base", version.ref = "time4j-base" }
+time4j-tzdata = { module = "net.time4j:time4j-tzdata", version.ref = "time4j-tzdata" }
+toml = { module = "net.peanuuutz:tomlkt", version.ref = "toml" }
+
+[bundles]
+commons = [ "commons-validator" ]

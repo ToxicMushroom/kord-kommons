@@ -1,6 +1,6 @@
 package me.melijn.kordkommons.redis
 
-data class RedisConfig(
+public data class RedisConfig(
     // whether you want to connect to redis at all
     val enabled: Boolean,
 

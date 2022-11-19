@@ -1,7 +1,7 @@
 package me.melijn.kordkommons.async
 
 
-class Task(private val func: suspend () -> Unit) : KTRunnable {
+public class Task(private val func: suspend () -> Unit) : KTRunnable {
 
     override suspend fun run() {
         try {
@@ -12,7 +12,7 @@ class Task(private val func: suspend () -> Unit) : KTRunnable {
     }
 }
 
-class DeferredNTask<T>(private val func: suspend () -> T?) : DeferredNKTRunnable<T> {
+public class DeferredNTask<T>(private val func: suspend () -> T?) : DeferredNKTRunnable<T> {
 
     override suspend fun run(): T? {
         return try {
@@ -24,21 +24,21 @@ class DeferredNTask<T>(private val func: suspend () -> T?) : DeferredNKTRunnable
     }
 }
 
-class EvalDeferredNTask<T>(private val func: suspend () -> T?) : DeferredNKTRunnable<T> {
+public class EvalDeferredNTask<T>(private val func: suspend () -> T?) : DeferredNKTRunnable<T> {
 
     override suspend fun run(): T? {
         return func()
     }
 }
 
-class DeferredTask<T>(private val func: suspend () -> T) : DeferredKTRunnable<T> {
+public class DeferredTask<T>(private val func: suspend () -> T) : DeferredKTRunnable<T> {
 
     override suspend fun run(): T {
         return func()
     }
 }
 
-class RunnableTask(private val func: suspend () -> Unit) : Runnable {
+public class RunnableTask(private val func: suspend () -> Unit) : Runnable {
 
     override fun run() {
         TaskManager.async {
@@ -47,7 +47,7 @@ class RunnableTask(private val func: suspend () -> Unit) : Runnable {
     }
 }
 
-class TaskInline(private inline val func: () -> Unit) : Runnable {
+public class TaskInline(private inline val func: () -> Unit) : Runnable {
 
     override fun run() {
         try {
@@ -59,16 +59,16 @@ class TaskInline(private inline val func: () -> Unit) : Runnable {
 }
 
 @FunctionalInterface
-interface KTRunnable {
-    suspend fun run()
+public interface KTRunnable {
+    public suspend fun run()
 }
 
 @FunctionalInterface
-interface DeferredNKTRunnable<T> {
-    suspend fun run(): T?
+public interface DeferredNKTRunnable<T> {
+    public suspend fun run(): T?
 }
 
 @FunctionalInterface
-interface DeferredKTRunnable<T> {
-    suspend fun run(): T
+public interface DeferredKTRunnable<T> {
+    public suspend fun run(): T
 }

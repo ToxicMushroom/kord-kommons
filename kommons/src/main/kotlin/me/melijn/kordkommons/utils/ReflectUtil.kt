@@ -1,12 +1,13 @@
 package me.melijn.kordkommons.utils
 
 import me.melijn.kordkommons.logger.Log
+import mu.KLogger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-object ReflectUtil {
+public object ReflectUtil {
 
-    val logger by Log
+    public val logger: KLogger by Log
 
     /**
      * @param packageName package the generated classes resides in
@@ -19,7 +20,7 @@ object ReflectUtil {
      *
      * @return the object of the resolved class
      */
-    fun <T> getInstanceOfKspClass(
+    public fun <T> getInstanceOfKspClass(
         packageName: String,
         baseClassName: String,
         params: Array<Class<*>> = arrayOf(),
@@ -38,7 +39,7 @@ object ReflectUtil {
      *
      * @return the class object of the resolved class
      */
-    fun findCompleteGeneratedKspClass(packageName: String, baseClassName: String): Class<*> {
+    public fun findCompleteGeneratedKspClass(packageName: String, baseClassName: String): Class<*> {
         var i = 0
         val sysCl = ClassLoader.getSystemClassLoader()
         try {
@@ -54,7 +55,7 @@ object ReflectUtil {
     /**
      * Broken for jar files
      */
-    fun findAllClassesUsingClassLoader(packageName: String): Sequence<Class<*>?> {
+    public fun findAllClassesUsingClassLoader(packageName: String): Sequence<Class<*>?> {
         val stream = ClassLoader.getSystemClassLoader()
             .getResourceAsStream(packageName.replace("[.]".toRegex(), "/"))
             ?: return emptySequence()

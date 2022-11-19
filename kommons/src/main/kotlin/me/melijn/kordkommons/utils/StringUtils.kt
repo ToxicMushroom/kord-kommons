@@ -5,12 +5,12 @@ import kotlin.collections.ArrayList
 import kotlin.math.pow
 
 
-val SPACE_PATTERN = Regex("\\s+")
-const val SPLIT_HINT = "`SPLIT_HERE`"
+public val SPACE_PATTERN: Regex = Regex("\\s+")
+public const val SPLIT_HINT: String = "`SPLIT_HERE`"
 
-object StringUtils {
+public object StringUtils {
 
-    fun humanReadableByteCountBin(bytes: Int, locale: Locale = Locale.getDefault()): String =
+    public fun humanReadableByteCountBin(bytes: Int, locale: Locale = Locale.getDefault()): String =
         humanReadableByteCountBin(bytes.toLong(), locale)
 
     /**
@@ -23,7 +23,7 @@ object StringUtils {
      *
      * @return formatted string
      */
-    fun humanReadableByteCountBin(bytes: Long, locale: Locale = Locale.getDefault()): String {
+    public fun humanReadableByteCountBin(bytes: Long, locale: Locale = Locale.getDefault()): String {
         return when {
             bytes < 1024L -> "$bytes B"
             bytes < 0xfffccccccccccccL shr 40 -> String.format(locale, "%.3f KiB", bytes / 2.0.pow(10.0))
@@ -43,7 +43,7 @@ object StringUtils {
      *
      * @return best split index
      */
-    fun getSplitIndex(text: String, splitAtLeast: Int): Int {
+    public fun getSplitIndex(text: String, splitAtLeast: Int): Int {
         var index = text.lastIndexOf(SPLIT_HINT)
         if (index < splitAtLeast) index = text.lastIndexOf("\n")
         if (index < splitAtLeast) index = text.lastIndexOf(". ")
@@ -67,7 +67,7 @@ object StringUtils {
      *
      * @return list of pieces
      */
-    fun splitMessage(message: String, splitAtLeast: Int = 1800, maxLength: Int = 2000): List<String> {
+    public fun splitMessage(message: String, splitAtLeast: Int = 1800, maxLength: Int = 2000): List<String> {
         var msg = message
         val messages = ArrayList<String>()
         while (msg.length > maxLength) {
@@ -82,7 +82,7 @@ object StringUtils {
         return messages
     }
 
-    fun splitMessageWithCodeBlocks(
+    public fun splitMessageWithCodeBlocks(
         message: String,
         splitAtLeast: Int = 1800,
         maxLength: Int = 1970,
@@ -97,14 +97,14 @@ object StringUtils {
 /**
  * @return whether the string contains an [Int]
  */
-fun String.isNumber(): Boolean {
+public fun String.isNumber(): Boolean {
     return toIntOrNull() != null
 }
 
 /**
  * @return whether the string contains an [Int] and that the value of that int is >= 0
  */
-fun String.isPositiveNumber(): Boolean {
+public fun String.isPositiveNumber(): Boolean {
     val number = toIntOrNull()
     return number != null && number >= 0
 }
@@ -112,7 +112,7 @@ fun String.isPositiveNumber(): Boolean {
 /**
  * @return whether the string contains an [Int] and that the value of that int is <= 0
  */
-fun String.isNegativeNumber(): Boolean {
+public fun String.isNegativeNumber(): Boolean {
     val number = toIntOrNull()
     return number != null && number <= 0
 }
@@ -120,7 +120,7 @@ fun String.isNegativeNumber(): Boolean {
 /**
  * @return whether the string contains an [Int] and that the value of that int is > 0
  */
-fun String.isStrictPositiveNumber(): Boolean {
+public fun String.isStrictPositiveNumber(): Boolean {
     val number = toIntOrNull()
     return number != null && number > 0
 }
@@ -128,12 +128,12 @@ fun String.isStrictPositiveNumber(): Boolean {
 /**
  * @return whether the string contains an [Int] and that the value of that int is < 0
  */
-fun String.isStrictNegativeNumber(): Boolean {
+public fun String.isStrictNegativeNumber(): Boolean {
     val number = toIntOrNull()
     return number != null && number < 0
 }
 
-fun String.remove(vararg strings: String, ignoreCase: Boolean = false): String {
+public fun String.remove(vararg strings: String, ignoreCase: Boolean = false): String {
     var newString = this
     for (string in strings) {
         newString = newString.replace(string, "", ignoreCase)
@@ -141,7 +141,7 @@ fun String.remove(vararg strings: String, ignoreCase: Boolean = false): String {
     return newString
 }
 
-fun String.removeFirst(vararg strings: String, ignoreCase: Boolean = false): String {
+public fun String.removeFirst(vararg strings: String, ignoreCase: Boolean = false): String {
     var newString = this
     for (string in strings) {
         newString = newString.replaceFirst(string, "", ignoreCase)
@@ -149,7 +149,7 @@ fun String.removeFirst(vararg strings: String, ignoreCase: Boolean = false): Str
     return newString
 }
 
-fun String.removeFirst(vararg regexes: Regex): String {
+public fun String.removeFirst(vararg regexes: Regex): String {
     var newString = this
     for (regex in regexes) {
         newString = newString.replaceFirst(regex, "")
@@ -157,14 +157,14 @@ fun String.removeFirst(vararg regexes: Regex): String {
     return newString
 }
 
-fun String.removePrefix(prefix: CharSequence, ignoreCase: Boolean = false): String {
+public fun String.removePrefix(prefix: CharSequence, ignoreCase: Boolean = false): String {
     if (startsWith(prefix, ignoreCase)) {
         return substring(prefix.length)
     }
     return this
 }
 
-fun String.splitIETEL(delimiter: String): List<String> {
+public fun String.splitIETEL(delimiter: String): List<String> {
     val res = this.split(delimiter)
     return if (res.first().isEmpty() && res.size == 1) {
         emptyList()
@@ -173,7 +173,7 @@ fun String.splitIETEL(delimiter: String): List<String> {
     }
 }
 
-fun String.escapeMarkdown(): String {
+public fun String.escapeMarkdown(): String {
     return this.replace("*", "\\*")
         .replace("||", "\\|\\|")
         .replace("_", "\\_")
@@ -182,11 +182,11 @@ fun String.escapeMarkdown(): String {
         .replace("`", "'")
 }
 
-fun String.escapeCodeBlock(): String {
+public fun String.escapeCodeBlock(): String {
     return this.replace("`", "'")
 }
 
-fun String.toUpperWordCase(): String {
+public fun String.toUpperWordCase(): String {
     var previous = ' '
     var newString = ""
     this.toCharArray().forEach { c: Char ->
@@ -196,19 +196,19 @@ fun String.toUpperWordCase(): String {
     return newString
 }
 
-fun Int.toHexString(size: Int = 6): String {
+public fun Int.toHexString(size: Int = 6): String {
     return String.format("#%0${size}X", 0xFFFFFF and this)
 }
 
-fun String.isInside(vararg stringList: String, ignoreCase: Boolean): Boolean {
+public fun String.isInside(vararg stringList: String, ignoreCase: Boolean): Boolean {
     return stringList.any { it.equals(this, ignoreCase) }
 }
 
-fun String.isInside(stringList: Collection<String>, ignoreCase: Boolean): Boolean {
+public fun String.isInside(stringList: Collection<String>, ignoreCase: Boolean): Boolean {
     return stringList.any { it.equals(this, ignoreCase) }
 }
 
-fun String.camelToSnake(): String {
+public fun String.camelToSnake(): String {
     val camelIndexes = mutableListOf<Int>()
     forEachIndexed { index, c ->
         if (index != 0 && c.isUpperCase() && !this[index - 1].isUpperCase()) camelIndexes.add(index)
@@ -218,4 +218,4 @@ fun String.camelToSnake(): String {
     return snakeBuilder.toString()
 }
 
-fun ansiFormat(colorCode: String) = "\u001B[0;${colorCode}m"
+public fun ansiFormat(colorCode: String): String = "\u001B[0;${colorCode}m"

@@ -1,95 +1,74 @@
 plugins {
-    kotlin("jvm") version "1.7.10"
-    id("com.google.devtools.ksp") version "1.7.10-1.0.6"
-    kotlin("plugin.serialization") version "1.7.10"
+    application
+    `kordex-module`
+    `dokka-module`
+    `ksp-module`
+    `disable-explicit-api-mode`
 }
 
-group = "me.melijn.kordkommons"
-version = "0.1.0"
-
-configure<JavaPluginExtension> {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+buildscript {
+    repositories {
+        maven {
+            name = "Melijn Nexus"
+            url = uri("https://nexus.melijn.com/repository/maven-public/")
+        }
+    }
 }
-
-repositories {
-    mavenCentral()
-}
-
-val kotlin = "1.7.10"
-val kotlinX = "1.6.1"
-val ksp = "1.7.10-1.0.6"
-val koin = "3.1.5"
-val kordKommons = "1.2.3"
-val apKordVersion = "0.1.3"
-val redgresKommons = "0.0.3"
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinX")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$kotlinX")
+    implementation(libs.kotlin.stdlib)
 
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinX")
+    implementation(libs.kx.coroutines.core)
+    implementation(libs.kx.coroutines.jdk)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    implementation(libs.kx.ser)
 
-    implementation("com.google.devtools.ksp:symbol-processing-api:$ksp")
-    implementation("io.insert-koin:koin-core:$koin")
+    implementation(libs.ksp)
+    implementation(libs.koin.core)
 
     val apKord = project(":annotation-processor")
+    val apRedgres = project(":annotation-processor-redgres")
+    val apKordex = project(":annotation-processor-kordex")
     implementation(apKord)
     ksp(apKord)
-//    val apKordex = project(":annotation-processor-kordex")
-//    implementation(apKordex)
-//    ksp(apKordex)
+    implementation(apRedgres)
+    ksp(apRedgres)
+    implementation(apKordex)
+    ksp(apKordex)
 
-    implementation("org.jetbrains.exposed:exposed-core:0.38.2")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.38.2")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.38.2")
+    implementation(libs.kordex)
 
-    // https://search.maven.org/artifact/com.zaxxer/HikariCP
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.datetime)
+    implementation(libs.exposed.springbs)
 
-    // https://mvnrepository.com/artifact/org.postgresql/postgresql
-    implementation("org.postgresql:postgresql:42.4.0")
+    implementation(libs.hikaricp) // https://search.maven.org/artifact/com.zaxxer/HikariCP
+    implementation(libs.postgresql) // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    implementation(libs.lettuce) // https://mvnrepository.com/artifact/io.lettuce/lettuce-core
 
-    // https://mvnrepository.com/artifact/io.lettuce/lettuce-core
-    implementation("io.lettuce:lettuce-core:6.2.0.RELEASE")
-
-    // https://github.com/cdimascio/dotenv-kotlin
-    implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
-
-    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation(libs.dotenv) // https://github.com/cdimascio/dotenv-kotlin
+    implementation(libs.logging) // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
 
     implementation(project(":kommons"))
     implementation(project(":redgres-kommons"))
 }
 
 ksp {
-    arg("apkordex_package", "me.melijn.gen")
+    arg("ap_kordex_package", "me.melijn.gen")
+    arg("ap_redgres_package", "me.melijn.gen")
+    arg("ap_redgres_redis_key_prefix", "melijn:")
     arg("ap_package", "me.melijn.gen")
-    arg("ap_redis_key_prefix", "kommonstests:")
+    arg("ap_imports", "import org.koin.core.context.GlobalContext;import com.kotlindiscord.kord.extensions.utils.getKoin;import org.koin.core.parameter.ParametersHolder;")
+    arg("ap_interfaces", "")
+    arg("ap_init_placeholder", "GlobalContext.get().get<%className%> { ParametersHolder() }")
 }
 
-kotlin {
-    sourceSets.main {
-        kotlin.srcDir("build/generated/ksp/main/kotlin")
-    }
-    sourceSets.test {
-        kotlin.srcDir("build/generated/ksp/test/kotlin")
-    }
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
+
+compileKotlin.kotlinOptions {
+    languageVersion = "1.7"
 }
 
-tasks {
-    withType(JavaCompile::class) {
-        options.encoding = "UTF-8"
-    }
-    withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-        kotlinOptions {
-            jvmTarget = "11"
-        }
-    }
+application {
+    this.mainClass.set("me.melijn.apkordteseting.MainKt")
 }

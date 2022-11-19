@@ -1,9 +1,19 @@
+rootProject.name = "melijn-kommons"
 
-rootProject.name = "kord-kommons"
-include("annotation-processor")
-include("annotation-processor-redgres")
-include("kommons")
-include("kord-kommons")
-include("annotation-processor-kordex")
-include("redgres-kommons")
-include("annotation-processor-tests")
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("libs.versions.toml"))
+        }
+    }
+}
+
+include(
+    "annotation-processor",
+    "annotation-processor-redgres",
+    "kommons",
+    "kord-kommons",
+    "annotation-processor-kordex",
+    "redgres-kommons",
+    "annotation-processor-tests"
+)

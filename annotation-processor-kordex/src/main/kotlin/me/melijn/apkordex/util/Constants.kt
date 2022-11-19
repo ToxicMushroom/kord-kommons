@@ -1,3 +1,3 @@
 package me.melijn.apkordex.util
 
-val OPTION_PREFIX = "apkordex"
+public const val OPTION_PREFIX: String = "ap_kordex"

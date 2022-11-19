@@ -5,12 +5,12 @@ import java.text.FieldPosition
 import java.text.MessageFormat
 import java.util.*
 
-const val BUNDLE = "messages.bundle"
+public const val BUNDLE: String = "messages.bundle"
 
-object L10n {
-    fun translate(locale: Locale, @PropertyKey(resourceBundle = BUNDLE) key: String): String =
+public object L10n {
+    public fun translate(locale: Locale, @PropertyKey(resourceBundle = BUNDLE) key: String): String =
         ResourceBundle.getBundle(BUNDLE, locale).getString(key)
 
-    fun translate(locale: Locale, @PropertyKey(resourceBundle = BUNDLE) key: String, params: Array<out Any?>): String =
+    public fun translate(locale: Locale, @PropertyKey(resourceBundle = BUNDLE) key: String, params: Array<out Any?>): String =
         MessageFormat(translate(locale, key), locale).format(params, StringBuffer(64), FieldPosition(0)).toString()
 }

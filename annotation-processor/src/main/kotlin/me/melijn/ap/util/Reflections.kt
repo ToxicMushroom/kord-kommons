@@ -2,9 +2,9 @@ package me.melijn.ap.util
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 
-object Reflections {
+public object Reflections {
 
-    fun getCode(clazz: KSClassDeclaration): String {
+    public fun getCode(clazz: KSClassDeclaration): String {
         val field = clazz.javaClass.getDeclaredField("descriptor\$delegate")
         field.isAccessible = true
         val lazyDescriptor = field.get(clazz)
@@ -15,5 +15,4 @@ object Reflections {
         declarationProvider.isAccessible = true
         return declarationProvider.get(lazyValue).toString()
     }
-
 }

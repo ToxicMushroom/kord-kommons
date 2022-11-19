@@ -2,9 +2,9 @@ package me.melijn.apkordex.util
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 
-object Reflections {
+public object Reflections {
 
-    fun getCode(clazz: KSClassDeclaration): String {
+    public fun getCode(clazz: KSClassDeclaration): String {
         val field = clazz.javaClass.getDeclaredField("descriptor\$delegate")
         field.isAccessible = true
         val lazyDescriptor = field.get(clazz)

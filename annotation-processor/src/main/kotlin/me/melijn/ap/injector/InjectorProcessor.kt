@@ -5,7 +5,7 @@ import com.google.devtools.ksp.symbol.*
 import com.google.devtools.ksp.validate
 import me.melijn.ap.util.appendLine
 
-class InjectorProcessor(
+internal class InjectorProcessor(
     val codeGenerator: CodeGenerator,
     val logger: KSPLogger,
     val location: String,
@@ -40,7 +40,9 @@ class InjectorProcessor(
 
             """.trimIndent()
             )
-            injectKoinModuleFile.appendLine("class InjectionKoinModule${count} : ${InjectorInterface::class.java.simpleName}(), ${extraInterfaces} {\n")
+
+            val extraInterfacesFormatted = if (extraInterfaces.isBlank()) "" else ", $extraInterfaces"
+            injectKoinModuleFile.appendLine("class InjectionKoinModule${count} : ${InjectorInterface::class.java.simpleName}() $extraInterfacesFormatted {\n")
             injectKoinModuleFile.appendLine("    override val module = module {")
 
             process.forEach { it.accept(InjectorVisitor(singleLines, injectLines), Unit) }

@@ -14,18 +14,18 @@ import kotlinx.serialization.json.Json
 import kotlin.time.Duration
 import kotlin.time.toKotlinDuration
 
-object TimeUtil {
+public object TimeUtil {
 
     /**
      * @return [LocalDateTime] instance with date and time when called
      */
-    fun localDateTimeNow(): LocalDateTime = java.time.LocalDateTime.now().toKotlinLocalDateTime()
+    public fun localDateTimeNow(): LocalDateTime = java.time.LocalDateTime.now().toKotlinLocalDateTime()
 
     /**
      * Positive duration if time2 occurred after time1
      * @return [Duration] between [time1] and [time2]
      */
-    fun durationBetween(time1: Instant, time2: Instant): Duration {
+    public fun durationBetween(time1: Instant, time2: Instant): Duration {
         return java.time.Duration.between(time1.toJavaInstant(), time2.toJavaInstant()).toKotlinDuration()
     }
 
@@ -36,7 +36,7 @@ object TimeUtil {
      *
      * [Json.decodeFromString] ([TimeUtil.DurationSerializer], durationJsonString) to get duration objects
      */
-    object DurationSerializer : KSerializer<Duration> {
+    public object DurationSerializer : KSerializer<Duration> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Millis", PrimitiveKind.LONG)
 
         override fun deserialize(decoder: Decoder): Duration {

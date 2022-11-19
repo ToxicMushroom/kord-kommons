@@ -8,7 +8,7 @@ import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
 import me.melijn.apkordex.util.appendLine
 
-class ExtensionProcessor(
+internal class ExtensionProcessor(
     val codeGenerator: CodeGenerator,
     val logger: KSPLogger,
     val location: String

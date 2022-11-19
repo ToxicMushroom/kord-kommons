@@ -6,7 +6,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.kotlindiscord.kord.extensions.utils.env
 import me.melijn.apkordex.util.OPTION_PREFIX
 
-class ExtensionProvider : SymbolProcessorProvider {
+internal class ExtensionProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return ExtensionProcessor(
             environment.codeGenerator,

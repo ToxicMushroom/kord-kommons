@@ -1,3 +1,3 @@
 package me.melijn.apredgres.cacheable
 
-annotation class Cacheable()
+public annotation class Cacheable

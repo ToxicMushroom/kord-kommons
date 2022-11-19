@@ -32,25 +32,38 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
  * INSERT INTO whatever(identifier, value) VALUES('some identifier', 'inserted')
  * ON DUPLICATE KEY UPDATE value = 'updated'
  */
-fun <T : Table, K> T.insertOrUpdate(
+public fun <T : Table, K> T.insertOrUpdate(
     insert: T.(InsertStatement<Number>) -> Unit,
     update: T.(UpdateBuilder<Int>) -> Unit,
-    results: (InsertOrUpdate<Number>.() -> K)? = null
-): K? {
+    results: InsertOrUpdate<Number>.() -> K
+): K {
     val updateQuery = UpsertUpdateBuilder(this).apply {
         update(this)
     }
     return InsertOrUpdate<Number>(updateQuery, this).run {
         insert(this)
-        val res = results?.let { it() }
+        val res = results()
         execute(TransactionManager.current())
         res
     }
 }
 
-class UpsertUpdateBuilder(table: Table) : UpdateBuilder<Int>(StatementType.OTHER, listOf(table)) {
+public fun <T : Table> T.insertOrUpdate(
+    insert: T.(InsertStatement<Number>) -> Unit,
+    update: T.(UpdateBuilder<Int>) -> Unit
+): Int? {
+    val updateQuery = UpsertUpdateBuilder(this).apply {
+        update(this)
+    }
+    return InsertOrUpdate<Number>(updateQuery, this).run {
+        insert(this)
+        execute(TransactionManager.current())
+    }
+}
 
-    val firstDataSet: List<Pair<Column<*>, Any?>> get() = values.toList()
+public class UpsertUpdateBuilder(table: Table) : UpdateBuilder<Int>(StatementType.OTHER, listOf(table)) {
+
+    public val firstDataSet: List<Pair<Column<*>, Any?>> get() = values.toList()
 
     override fun arguments(): List<List<Pair<IColumnType, Any?>>> = QueryBuilder(true).run {
         values.forEach {
@@ -68,8 +81,8 @@ class UpsertUpdateBuilder(table: Table) : UpdateBuilder<Int>(StatementType.OTHER
     }
 }
 
-class InsertOrUpdate<Key : Any>(
-    val update: UpsertUpdateBuilder, table: Table, isIgnore: Boolean = false
+public class InsertOrUpdate<Key : Any>(
+    public val update: UpsertUpdateBuilder, table: Table, isIgnore: Boolean = false
 ) : InsertStatement<Key>(table, isIgnore) {
 
     override fun arguments(): List<List<Pair<IColumnType, Any?>>> {

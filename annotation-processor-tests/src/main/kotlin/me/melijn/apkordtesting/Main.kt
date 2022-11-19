@@ -1,7 +1,7 @@
 package me.melijn.apkordtesting
 
-import me.melijn.ap.createtable.CreateTableInterface
 import me.melijn.ap.injector.InjectorInterface
+import me.melijn.apredgres.createtable.CreateTableInterface
 import me.melijn.gen.Settings
 import me.melijn.kordkommons.database.ConfigUtil
 import me.melijn.kordkommons.database.DriverManager
