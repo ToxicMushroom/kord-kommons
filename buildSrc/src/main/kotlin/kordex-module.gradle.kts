@@ -3,9 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-
-//    id("io.gitlab.arturbosch.detekt")
-//    id("org.cadixdev.licenser")
 }
 
 val sourceJar = task("sourceJar", Jar::class) {
@@ -28,10 +25,6 @@ tasks {
 
     kotlin {
         explicitApi()
-
-        jvmToolchain {
-//            languageVersion.set(JavaLanguageVersion.of("11"))
-        }
     }
 
     jar {
@@ -39,8 +32,6 @@ tasks {
     }
 
     afterEvaluate {
-//        rootProject.file("LICENSE").copyTo(rootProject.file("build/LICENSE-kordex"), true)
-
         tasks.withType<JavaCompile>().configureEach {
             sourceCompatibility = "11"
             targetCompatibility = "11"
@@ -53,15 +44,3 @@ tasks {
         }
     }
 }
-
-//detekt {
-//    buildUponDefaultConfig = true
-//    config = files("$rootDir/detekt.yml")
-//
-//    autoCorrect = true
-//}
-//
-//license {
-//    setHeader(rootProject.file("LICENSE"))
-//    ignoreFailures(System.getenv()["CI"] == null)
-//}
