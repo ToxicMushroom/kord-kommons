@@ -26,6 +26,14 @@ publishing {
 
             version = project.version
         }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ToxicMushroom/kord-kommons")
+            credentials {
+                username = project.findProperty("ghpMkMavenUser") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("ghpMkMavenPat") as String? ?: System.getenv("TOKEN")
+            }
+        }
     }
 
     publications {
