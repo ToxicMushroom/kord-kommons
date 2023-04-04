@@ -12,7 +12,7 @@ buildscript {
 
         maven {
             name = "MelijnRepo Snapshots"
-            url = uri("https://reposilite.melijn.com/releases/")
+            url = uri("https://reposilite.melijn.com/snapshots/")
         }
         maven {
             name = "MelijnRepo Releases"
@@ -45,6 +45,11 @@ repositories {
     maven {
         name = "Sonatype Snapshots"
         url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+    }
+
+    maven {
+        name = "MelijnRepo Shitpack"
+        url = uri("https://reposilite.melijn.com/shitpack")
     }
 
     maven {

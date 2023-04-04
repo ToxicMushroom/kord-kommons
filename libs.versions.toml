@@ -12,9 +12,8 @@ jsoup = "1.15.2"
 junit = "5.8.2"
 koin = "3.2.0"
 konf = "1.1.2"
-#kord = "0.8.x-SNAPSHOT"
-kord = "0.8.0-M17"
-kordex = "1.5.5-SNAPSHOT"
+
+kordex = "1.5.6-SNAPSHOT"
 kotlinpoet = "1.12.0"
 ksp = "1.7.20-1.0.6"
 ktor = "2.0.3"
@@ -34,8 +33,8 @@ dotenv = "6.2.2"
 
 exposed = "0.41.1" # https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
 hikari = "5.0.1" # https://mvnrepository.com/artifact/com.zaxxer/HikariCP
-postgres = "42.5.0" # https://mvnrepository.com/artifact/org.postgresql/postgresql
-lettuce = "6.2.1.RELEASE" # https://mvnrepository.com/artifact/io.lettuce/lettuce-core
+postgres = "42.6.0" # https://mvnrepository.com/artifact/org.postgresql/postgresql
+lettuce = "6.2.3.RELEASE" # https://mvnrepository.com/artifact/io.lettuce/lettuce-core
 
 [libraries]
 commons-validator = { module = "commons-validator:commons-validator", version.ref = "commons-validator" }
@@ -51,7 +50,7 @@ koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-logger = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 
-kord = { module = "dev.kord:kord-core", version.ref = "kord" }
+
 kordex = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kordex" }
 #kord-voice = { module = "dev.kord:core-voice", version.ref = "kord" }
 
