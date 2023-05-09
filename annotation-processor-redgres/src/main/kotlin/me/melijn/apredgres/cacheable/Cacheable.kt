@@ -1,3 +1,9 @@
 package me.melijn.apredgres.cacheable
 
-public annotation class Cacheable
+/**
+ * TTL in seconds
+ */
+public annotation class Cacheable(
+    val ttl: Int = 300,
+    val refreshCacheOnFetch: Boolean = true
+)

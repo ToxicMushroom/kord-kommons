@@ -118,6 +118,30 @@ public class DriverManager(
             logger.info("Connection collected: Alive for ${(System.currentTimeMillis() - startConnection)}ms")
     }
 
+    public suspend fun getDBVersion(): String = suspendCoroutine {
+        try {
+            getUsableConnection { con ->
+                it.resume(
+                    con.metaData.databaseProductVersion.replace(postgresqlPattern, "$1")
+                )
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+            it.resume("error")
+        }
+    }
+
+    public suspend fun getConnectorVersion(): String = suspendCoroutine {
+        try {
+            getUsableConnection { con ->
+                it.resume(con.metaData.driverVersion)
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+            it.resume("error")
+        }
+    }
+
     public fun registerTable(table: String, tableStructure: String, primaryKey: String, uniqueKey: String = "") {
         val hasPrimary = primaryKey != ""
         val hasUnique = uniqueKey != ""
@@ -143,15 +167,22 @@ public class DriverManager(
         }
     }
 
-    /** returns the amount of rows affected by the query
-     * [query] the sql query that needs execution
-     * [objects] the arguments of the query
-     * [Int] returns the amount of affected rows
-     * example:
-     *   query: "UPDATE apples SET bad = ? WHERE id = ?"
-     *   objects: true, 6
-     *   return value: 1
-     * **/
+    /**
+     * Runs a modifying query on the database.
+     *
+     * **Example Usage**
+     *```
+     * val modifiedRows = driverManager.executeUpdateGetChanged(
+     *     "UPDATE apples SET bad = ? WHERE id = ?",
+     *     true, 6
+     * )
+     * println(modifiedRows) // > 1
+     * ```
+     * @param query the sql query that needs execution
+     * @param objects the arguments of the query
+     *
+     * @return the amount of modified rows
+     */
     public suspend fun executeUpdateGetChanged(query: String, vararg objects: Any?): Int = suspendCoroutine {
         try {
             getUsableConnection { connection ->
@@ -169,15 +200,20 @@ public class DriverManager(
         }
     }
 
-    /** returns the amount of rows affected by the query
-     * [query] the sql query that needs execution
-     * [objects] the arguments of the query
-     * [Int] returns the amount of affected rows
-     * example:
-     *   query: "UPDATE apples SET bad = ? WHERE id = ?"
-     *   objects: true, 6
-     *   return value: 1
-     * **/
+    /**
+     * Runs a modifying query on the database.
+     *
+     * **Example Usage**
+     *```
+     * riverManager.executeUpdate(
+     *     "UPDATE apples SET bad = ? WHERE id = ?",
+     *     true, 6
+     * )
+     * ```
+     * @param query the sql query that needs execution
+     * @param objects the arguments of the query
+     *
+     */
     public fun executeUpdate(query: String, vararg objects: Any?) {
         try {
             getUsableConnection { connection ->
@@ -195,28 +231,33 @@ public class DriverManager(
     }
 
     /**
-     * [query] the sql query that needs execution
-     * [resultset] The consumer that will contain the resultset after executing the query
-     * [objects] the arguments of the query
-     * example:
-     *   query: "SELECT * FROM apples WHERE id = ?"
-     *   objects: 5
-     *   resultset: Consumer object to handle the resultset
-     * **/
+     * Vararg wrapper function for [executeQueryList]
+     */
     public fun executeQuery(query: String, resultset: (ResultSet) -> Unit, vararg objects: Any?) {
         executeQueryList(query, resultset, objects.toList())
     }
 
     /**
-     * [query] the sql query that needs execution
-     * [resultset] The consumer that will contain the resultset after executing the query
-     * [objects] the arguments of the query
-     * example:
-     *   query: "SELECT * FROM apples WHERE id = ?"
-     *   objects: 5
-     *   resultset: Consumer object to handle the resultset
-     * **/
-    public fun executeQueryList(query: String, resultset: (ResultSet) -> Unit, objects: List<Any?>) {
+     * Runs a selecting query on the database.
+     *
+     *
+     * **Example Usage**
+     *```
+     * val updatedRows = driverManager.executeQueryList(
+     *     "SELECT * FROM apples WHERE id = ?",
+     *     { rs -> println(rs.getBoolean("bad")) },
+     *     5
+     * )
+     * println("hi")
+     * // > hi
+     * // > true
+     * ```
+     * @param query the sql query that needs execution
+     * @param objects the arguments of the query
+     *
+     * @return the potentially generated key
+     */
+    public fun executeQueryList(query: String, callback: (ResultSet) -> Unit, objects: List<Any?>) {
         try {
             getUsableConnection { connection ->
                 if (connection.isClosed) {
@@ -226,7 +267,7 @@ public class DriverManager(
                     for ((index, value) in objects.withIndex()) {
                         preparedStatement.setObject(index + 1, value)
                     }
-                    preparedStatement.executeQuery().use { resultSet -> resultset.invoke(resultSet) }
+                    preparedStatement.executeQuery().use { resultSet -> callback(resultSet) }
                 }
             }
         } catch (e: SQLException) {
@@ -237,49 +278,24 @@ public class DriverManager(
         }
     }
 
-    public suspend fun getDBVersion(): String = suspendCoroutine {
-        try {
-            getUsableConnection { con ->
-                it.resume(
-                    con.metaData.databaseProductVersion.replace(postgresqlPattern, "$1")
-                )
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-            it.resume("error")
-        }
-    }
-
-    public suspend fun getConnectorVersion(): String = suspendCoroutine {
-        try {
-            getUsableConnection { con ->
-                it.resume(
-                    con.metaData.driverVersion
-                )
-            }
-
-        } catch (e: SQLException) {
-            e.printStackTrace()
-            it.resume("error")
-        }
-    }
-
-    public fun clear(table: String): Int {
-        dataSource.connection.use { connection ->
-            connection.prepareStatement("TRUNCATE $table").use { preparedStatement ->
-                return preparedStatement.executeUpdate()
-            }
-        }
-    }
-
-    /** returns the amount of rows affected by the query
-     * [query] the sql query that needs execution
-     * [objects] the arguments of the query
-     * example:
-     *   query: "UPDATE apples SET bad = ? WHERE id = ?"
-     *   objects: true, 6
-     *   return value: 1
-     * **/
+    /**
+     * Runs a modifying query on the database.
+     *
+     * **Example Usage**
+     *```
+     * val newId = driverManager.executeUpdateGetGeneratedKeys(
+     *     "INSERT INTO apples (bad) VALUES (?)",
+     *     true
+     * )
+     * println(newId) // > 6
+     * ```
+     * @param query the sql query that needs execution
+     * @param objects the arguments of the query
+     *
+     * @throws IllegalArgumentException if the query did not generate a key, this can happen when there is no AUTO_INCREMENT on a column
+     *
+     * @return the potentially generated key
+     */
     public suspend fun executeUpdateGetGeneratedKeys(query: String, vararg objects: Any?): Long = suspendCoroutine {
         try {
             getUsableConnection { connection ->
@@ -307,6 +323,20 @@ public class DriverManager(
         }
     }
 
+    /**
+     * Clears all the entries from [table]
+     */
+    public fun clear(table: String): Int {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("TRUNCATE $table").use { preparedStatement ->
+                return preparedStatement.executeUpdate()
+            }
+        }
+    }
+
+    /**
+     * Deletes the [table] and all it's entries
+     */
     public fun dropTable(table: String) {
         afterConnectToBeExecutedQueries.add(0, "DROP TABLE $table")
     }
@@ -324,7 +354,15 @@ public class DriverManager(
         return null
     }
 
-    // ttl: minutes
+    /**
+     * Tells redis to store [key] -> [value] with an expiry duration of [ttl] [ttlUnit].
+     *
+     * @param key the key
+     * @param value the value
+     * @param ttl The time to live for this entry, also see [ttlUnit]
+     * @param ttlUnit [TimeUnit.MINUTES] by default
+     * @param compress Whether redis should compress the sent data when storing it in ram
+     */
     public fun setCacheEntry(key: String, value: String, ttl: Int? = null, ttlUnit: TimeUnit = TimeUnit.MINUTES, compress: Boolean = false) {
         val async = getOpenRedisConnection(compress) ?: return
         if (ttl == null) async.set(key, value)
@@ -334,24 +372,45 @@ public class DriverManager(
         }
     }
 
+    /**
+     * Tells redis to store [key] -> [value] with your own provided arguments
+     *
+     * @param key the key
+     * @param value the value
+     * @param args Optional lettuce [SetArgs] object.
+     * @param compress Whether redis should compress the sent data when storing it in ram
+     */
     public fun setCacheEntryWithArgs(key: String, value: String, args: SetArgs? = null, compress: Boolean = false) {
         val async = getOpenRedisConnection(compress) ?: return
         if (args == null) async.set(key, value)
         else async.set(key, value, args)
     }
 
-    // ttl: minutes
-    public suspend fun getCacheEntry(key: String, ttlMinutes: Int? = null, compress: Boolean = false): String? {
+    /**
+     * Tells redis to fetch [key]'s value with a cache refresh duration of [ttl] [ttlUnit].
+     *
+     * @param key the key
+     * @param ttl the new time to live for this entry, also see [ttlUnit], when null the entry will keep it's previous ttl.
+     * @param ttlUnit [TimeUnit.MINUTES] by default
+     * @param compress Whether redis should compress the sent data when storing it in ram
+     *
+     * @return the associated value of [key], can be `null` if missing
+     */
+    public suspend fun getCacheEntry(key: String, ttl: Int? = null, ttlUnit: TimeUnit = TimeUnit.MINUTES, compress: Boolean = false): String? {
         val commands = getOpenRedisConnection(compress) ?: return null
         val result = commands
             .get(key)
             .await()
-        if (result != null && ttlMinutes != null) {
-            commands.expire(key, ttlMinutes * 60L)
+        if (result != null && ttl != null) {
+            val ttlSeconds = TimeUnit.SECONDS.convert(ttl.toLong(), ttlUnit)
+            commands.expire(key, ttlSeconds)
         }
         return result
     }
 
+    /**
+     * Bloody obvious innit
+     */
     public fun removeCacheEntry(key: String) {
         val con = getOpenRedisConnection() ?: return
         con.del(key)
