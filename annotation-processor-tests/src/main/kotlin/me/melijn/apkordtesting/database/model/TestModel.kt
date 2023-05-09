@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 object TestModel : Table("stuff") {
 
     val id = uuid("id")
-    val name = text("name")
+    val name = text("name").nullable()
     val added = datetime("added")
 
     override val primaryKey = PrimaryKey(id)
