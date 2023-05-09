@@ -66,7 +66,7 @@ ksp {
 val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 
 compileKotlin.kotlinOptions {
-    languageVersion = "1.7"
+    languageVersion = "1.8"
 }
 
 application {

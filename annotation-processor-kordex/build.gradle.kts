@@ -20,6 +20,6 @@ java {
 val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 
 compileKotlin.kotlinOptions {
-    languageVersion = "1.6"
+    languageVersion = "1.8"
     freeCompilerArgs = listOf("-Xskip-prerelease-check")
 }
