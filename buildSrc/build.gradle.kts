@@ -8,6 +8,7 @@ repositories {
     gradlePluginPortal()
 }
 
+// also update libs.versions.toml
 dependencies {
     implementation(kotlin("gradle-plugin", version = "1.8.21"))
     implementation(kotlin("serialization", version = "1.8.21"))
@@ -20,4 +21,10 @@ dependencies {
 
     implementation(gradleApi())
     implementation(localGroovy())
+}
+
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
+
+compileKotlin.kotlinOptions {
+    languageVersion = "1.8"
 }
