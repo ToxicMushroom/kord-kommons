@@ -120,3 +120,46 @@ private class Template {
     }
 }
 ```
+
+### Using database model and createTable
+```kt
+@CreateTable // this will make exposed run `create table if not exists ...` for this model
+@TableModel(true) // this wil create a matching data class and abstractManager class with helper functions
+object Attendance: Table("attendance") {
+
+    val attendanceId = long("attendance_id").autoIncrement()
+
+    val guildId = long("guild_id")
+    val channelId = long("channel_id")
+    val messageId = long("message_id").nullable()
+
+    // given to attendees for this attendance event
+    val roleId = long("role_id").nullable()
+
+    // At (nextMoment - closeOffset) we should stop accepting new attendees
+    val closeOffset = duration("close_offset").nullable()
+
+    val notifyAttendees = bool("notify_attendees")
+    // (nextMoment - notifyOffset) is when attendees are pinged
+    val notifyOffset = duration("notify_offset").nullable()
+
+    val topic = text("topic")
+    val description = text("description").nullable()
+
+    val repeating = bool("repeating")
+    val nextMoment = timestamp("next_moment")
+    // cron format
+    val schedule = text("schedule").nullable()
+
+    // time between last moment and starting the next attendance occurrence
+    // attendees are cleared when nextMoment + schedule_timeout is hit
+    val scheduleTimeout = duration("schedule_timeout").nullable()
+
+    override val primaryKey: PrimaryKey = PrimaryKey(guildId, channelId, messageId)
+
+    init {
+        index(true, attendanceId) // name = attendance_key
+        index(false, guildId) // name = guild_key
+    }
+}
+```

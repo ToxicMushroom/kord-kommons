@@ -1,13 +1,13 @@
 package me.melijn.apkordtesting.database.model
 
-import me.melijn.apredgres.cacheable.Cacheable
+import me.melijn.apredgres.tablemodel.TableModel
 import me.melijn.apredgres.createtable.CreateTable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.date
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 @CreateTable
-@Cacheable
+@TableModel(true)
 object TestModel : Table("stuff") {
 
     val id = uuid("id")

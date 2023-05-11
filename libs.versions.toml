@@ -1,5 +1,5 @@
 [versions]
-detekt = "1.22.0"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
+detekt = "1.23.0-RC3"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
 dokka = "1.8.10"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
 kotlin = "1.8.21"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
 
@@ -10,18 +10,16 @@ icu4j = "71.1"
 jansi = "2.4.0"
 jsoup = "1.15.2"
 junit = "5.8.2"
-koin = "3.2.0"
-konf = "1.1.2"
+koin = "3.4.0"
 
 kordex = "1.5.7-SNAPSHOT"
-kotlinpoet = "1.12.0"
+kotlinpoet = "1.13.2"
 ksp = "1.8.21-1.0.11"
-ktor = "2.0.3"
+ktor = "2.3.0"
 kx-ser = "1.5.0"
 kx-datetime = "0.4.0"
 kx-coroutines-core = "1.7.0"
 kx-coroutines-jdk = "1.7.0"
-linkie = "1.0.99"
 logback = "1.2.5"
 logging = "2.1.23"
 pf4j = "3.7.0"
@@ -29,7 +27,7 @@ sentry = "6.1.4"
 time4j-base = "5.9.1"
 time4j-tzdata = "5.0-2022a"
 toml = "0.1.6"
-dotenv = "6.2.2"
+dotenv = "6.4.1"
 
 exposed = "0.41.1" # https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
 hikari = "5.0.1" # https://mvnrepository.com/artifact/com.zaxxer/HikariCP
