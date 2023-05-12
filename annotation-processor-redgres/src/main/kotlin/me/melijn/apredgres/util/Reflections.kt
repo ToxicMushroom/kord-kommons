@@ -79,6 +79,15 @@ public object Reflections {
         return props
     }
 
+    /**
+     * Can currently handle
+     *  - index("name", field1, field2)
+     *  - index(unique = true, field1, field2) // name = field1_field2
+     *  - .index("name", field1, field2)
+     *  - val field = long("name").index("index_name")
+     *  And should be able to handle their combinations
+     * @return All found exposed indices in a Table
+     */
     public fun getIndexes(model: KSClassDeclaration): List<ExposedIndex> {
         val preCode = getCode(model)
         val indexLines = preCode.lines().filter { it.contains("index(") }
@@ -89,6 +98,7 @@ public object Reflections {
             val args = index.trim()
                 .removeFirst("//.*".toRegex())
                 .removeFirst("index(")
+                .removeFirst("(.*)?\\.index\\(".toRegex())
                 .trim()
                 .dropLast(1) // removes the last ")"
                 .split("\\s*,\\s*".toRegex())
@@ -96,7 +106,7 @@ public object Reflections {
             fun parseName(): String? {
                 val nameOverride: String =
                     "//\\s*name\\s*=\\s*(.*)".toRegex().find(index)?.groups?.get(1)?.value ?: ""
-                return nameOverride.takeIf { it.isNotBlank() } ?: args.drop(0).firstOrNull { it.contains("\"") }
+                return nameOverride.takeIf { it.isNotBlank() } ?: args.firstOrNull { it.contains("\"") }
             }
 
             val name = parseName()
