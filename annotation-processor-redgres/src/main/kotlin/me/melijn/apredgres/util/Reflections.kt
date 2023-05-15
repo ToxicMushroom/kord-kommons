@@ -10,6 +10,7 @@ import me.melijn.kordkommons.utils.removeFirst
 
 public object Reflections {
 
+    /** @return source code of the [KSClassDeclaration] as String */
     public fun getCode(clazz: KSClassDeclaration): String {
         val field = clazz.javaClass.getDeclaredField("descriptor\$delegate")
         field.isAccessible = true
@@ -23,6 +24,7 @@ public object Reflections {
     }
 
 
+    /** @return field names from a PrimaryKey [KSPropertyDeclaration] */
     public fun getFields(pkeyProperty: KSPropertyDeclaration): MutableList<String> {
         /** janky hack part, don't touch unless it broke pls **/
         val field = pkeyProperty.javaClass.getDeclaredField("propertyDescriptor\$delegate")
@@ -60,7 +62,7 @@ public object Reflections {
         return fieldList
     }
 
-
+    /** @return fieldNames that are autoIncrementing */
     public fun getAutoIncrementing(model: KSClassDeclaration): List<String> {
         val code = getCode(model)
         val results = "\\.autoIncrement\\(".toRegex().findAll(code).toList()
