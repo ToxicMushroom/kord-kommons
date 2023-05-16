@@ -13,7 +13,8 @@ public object TaskManager {
     }
 
     private val executorService: ExecutorService = ForkJoinPool()
-    private val dispatcher = executorService.asCoroutineDispatcher()
+    @Suppress("MemberVisibilityCanBePrivate")
+    public val dispatcher: ExecutorCoroutineDispatcher = executorService.asCoroutineDispatcher()
     public var scheduledExecutorService: ScheduledExecutorService =
         Executors.newScheduledThreadPool(15, threadFactory.invoke("Repeater"))
     public var coroutineScope: CoroutineScope = CoroutineScope(dispatcher)
