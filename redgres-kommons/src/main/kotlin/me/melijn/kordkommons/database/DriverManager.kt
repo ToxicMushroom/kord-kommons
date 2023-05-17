@@ -11,7 +11,8 @@ import io.lettuce.core.codec.CompressionCodec
 import io.lettuce.core.codec.StringCodec
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.future.await
-import me.melijn.kordkommons.async.TaskManager
+import kotlinx.coroutines.launch
+import me.melijn.kordkommons.async.TaskScope
 import me.melijn.kordkommons.redis.RedisConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
@@ -89,7 +90,7 @@ public class DriverManager(
             logger.info("Connected to redis")
 
         } catch (e: Throwable) {
-            TaskManager.async {
+            TaskScope.launch {
                 logger.warn("Retrying to connect to redis..")
                 recursiveConnectRedis(redisConfig.host, redisConfig.port)
                 logger.warn("Retrying to connect to redis has succeeded!")
