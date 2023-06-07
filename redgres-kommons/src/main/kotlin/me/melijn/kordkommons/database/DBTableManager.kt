@@ -14,7 +14,7 @@ public open class DBTableManager<T : Table>(
 
     public suspend inline fun <L> scopedTransaction(
         transactionIsolation: Int = Connection.TRANSACTION_REPEATABLE_READ,
-        crossinline func: (Transaction) -> L
+        crossinline func: suspend (Transaction) -> L
     ): L {
         return newSuspendedTransaction(transactionIsolation = transactionIsolation, db = driverManager.database) {
             func(this)
