@@ -5,12 +5,20 @@ import kotlinx.coroutines.sync.withLock
 
 public class SafeList<E>(private val lock: Mutex = Mutex()) {
 
-    private val list = ArrayList<E>()
+    private val list = mutableListOf<E>()
 
     public val size: Int
         get() = list.size
 
     public fun isEmpty(): Boolean = list.isEmpty()
+
+    public suspend fun copy(): MutableList<E> = lock.withLock {
+        return list.toMutableList()
+    }
+
+    public suspend fun immutableCopy(): List<E> = lock.withLock {
+        return list.toList()
+    }
 
     public suspend fun get(index: Int): E = lock.withLock {
         return list[index] ?: throw IndexOutOfBoundsException()
@@ -77,7 +85,7 @@ public class SafeList<E>(private val lock: Mutex = Mutex()) {
         }
     }
 
-    public suspend fun indexedForEach(function: (Int, E) -> Unit): Unit = lock.withLock {
+    public suspend fun indexedForEach(function: suspend (Int, E) -> Unit): Unit = lock.withLock {
         val size = list.size
         for (i in 0 until size) {
             function.invoke(i, list[i])
