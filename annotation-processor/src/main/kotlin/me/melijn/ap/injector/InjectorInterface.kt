@@ -6,6 +6,6 @@ public abstract class InjectorInterface {
 
     public abstract val module: Module
 
-    public abstract fun initInjects()
+    public abstract fun initInjects(initGroup: Int = 0)
 
 }
