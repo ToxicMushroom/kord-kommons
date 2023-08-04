@@ -15,11 +15,11 @@ koin = "3.4.0"
 kordex = "1.6.0-SNAPSHOT"
 kotlinpoet = "1.13.2"
 ksp = "1.8.21-1.0.11"
-ktor = "2.3.0"
+ktor = "2.3.3"
 kx-ser = "1.5.0"
 kx-datetime = "0.4.0"
-kx-coroutines-core = "1.7.0"
-kx-coroutines-jdk = "1.7.0"
+kx-coroutines-core = "1.7.3"
+kx-coroutines-jdk = "1.7.3"
 logback = "1.2.5"
 logging = "2.1.23"
 pf4j = "3.7.0"
@@ -32,7 +32,7 @@ dotenv = "6.4.1"
 exposed = "0.41.1" # https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
 hikari = "5.0.1" # https://mvnrepository.com/artifact/com.zaxxer/HikariCP
 postgres = "42.6.0" # https://mvnrepository.com/artifact/org.postgresql/postgresql
-lettuce = "6.2.4.RELEASE" # https://mvnrepository.com/artifact/io.lettuce/lettuce-core
+lettuce = "6.2.5.RELEASE" # https://mvnrepository.com/artifact/io.lettuce/lettuce-core
 
 [libraries]
 commons-validator = { module = "commons-validator:commons-validator", version.ref = "commons-validator" }

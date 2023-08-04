@@ -77,11 +77,13 @@ internal class InjectorProcessor(
     ) : KSVisitorVoid() {
 
         override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-            val declaration = classDeclaration.primaryConstructor!!
+            val declaration = classDeclaration.primaryConstructor
+            val args = declaration?.parameters?.joinToString(", ") { "get()" } ?: ""
 
             val className = classDeclaration.qualifiedName?.asString()
                 ?: throw IllegalStateException("Annotation not on class ?")
-            singleLines.add("         single { $className(${declaration.parameters.joinToString(", ") { "get()" }}) } bind $className::class\n")
+
+            singleLines.add("         single { $className($args) } bind $className::class\n")
 
             val create = injection.init
             val initGroup = injection.initGroup
