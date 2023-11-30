@@ -33,13 +33,13 @@ tasks {
 
     afterEvaluate {
         tasks.withType<JavaCompile>().configureEach {
-            sourceCompatibility = "11"
-            targetCompatibility = "11"
+            sourceCompatibility = "21"
+            targetCompatibility = "21"
         }
 
         withType<KotlinCompile>().configureEach {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "21"
             }
         }
     }

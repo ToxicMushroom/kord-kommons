@@ -27,7 +27,7 @@ dependencies {
 val compileKotlin: KotlinCompile by tasks
 
 compileKotlin.kotlinOptions {
-    languageVersion = "1.6"
+    languageVersion = "1.8"
 }
 
 dokkaModule {

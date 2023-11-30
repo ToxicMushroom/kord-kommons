@@ -1,7 +1,7 @@
 [versions]
-detekt = "1.23.0-RC3"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
-dokka = "1.8.10"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
-kotlin = "1.8.21"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
+detekt = "1.23.4"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
+dokka = "1.9.10"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
+kotlin = "1.9.21"  # Note: Plugin versions must be updated in buildSrc/build.gradle.kts
 
 commons-validator = "1.7"
 groovy = "3.0.9"
@@ -12,15 +12,15 @@ jsoup = "1.15.2"
 junit = "5.8.2"
 koin = "3.4.0"
 
-kordex = "1.6.0-SNAPSHOT"
+kordex = "1.6.4-SNAPSHOT"
 kotlinpoet = "1.13.2"
-ksp = "1.8.21-1.0.11"
-ktor = "2.3.3"
+ksp = "1.9.21-1.0.15"
+ktor = "2.3.5"
 kx-ser = "1.5.0"
 kx-datetime = "0.4.0"
 kx-coroutines-core = "1.7.3"
 kx-coroutines-jdk = "1.7.3"
-logback = "1.2.5"
+logback = "1.2.9"
 logging = "2.1.23"
 pf4j = "3.7.0"
 sentry = "6.1.4"
@@ -29,10 +29,10 @@ time4j-tzdata = "5.0-2022a"
 toml = "0.1.6"
 dotenv = "6.4.1"
 
-exposed = "0.41.1" # https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
+exposed = "0.40.1" # https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
 hikari = "5.0.1" # https://mvnrepository.com/artifact/com.zaxxer/HikariCP
-postgres = "42.6.0" # https://mvnrepository.com/artifact/org.postgresql/postgresql
-lettuce = "6.2.5.RELEASE" # https://mvnrepository.com/artifact/io.lettuce/lettuce-core
+postgres = "42.7.0" # https://mvnrepository.com/artifact/org.postgresql/postgresql
+lettuce = "6.2.6.RELEASE" # https://mvnrepository.com/artifact/io.lettuce/lettuce-core
 
 [libraries]
 commons-validator = { module = "commons-validator:commons-validator", version.ref = "commons-validator" }
