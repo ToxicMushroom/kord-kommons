@@ -32,7 +32,7 @@ public object ConfigUtil {
         config.leakDetectionThreshold = 2000
 
         config.poolName = "RedgresPool"
-        config.maximumPoolSize = 10
+        config.maximumPoolSize = 10 // https://github.com/brettwooldridge/HikariCP/issues/1463
 
         // https://stackoverflow.com/a/41206003/7271796
         config.isAutoCommit = false
