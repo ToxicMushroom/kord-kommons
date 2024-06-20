@@ -63,6 +63,11 @@ ksp {
     arg("ap_init_placeholder", "GlobalContext.get().get<%className%> { ParametersHolder() }")
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 
 compileKotlin.kotlinOptions {
